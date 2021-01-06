@@ -1,11 +1,11 @@
-<h1 align="center">sample-project</h1>
+<h1 align="center">AreYouOK</h1>
 <p align="center">
 <!--  <img src="" />-->
-  <a href="https://github.com/Bhupesh-V/sample-project/blob/master/LICENSE">
-    <img alt="License: MIT" src="https://img.shields.io/github/license/Bhupesh-V/sample-project" target="_blank" />
+  <a href="https://github.com/Bhupesh-V/areyouok/blob/master/LICENSE">
+    <img alt="License: MIT" src="https://img.shields.io/github/license/Bhupesh-V/areyouok" target="_blank" />
   </a>
-  <a href="https://github.com/Bhupesh-V/sample-project/issues">
-    <img alt="Issues" src="https://img.shields.io/github/issues/Bhupesh-V/sample-project?color=blueviolet" />
+  <a href="https://github.com/Bhupesh-V/areyouok/issues">
+    <img alt="Issues" src="https://img.shields.io/github/issues/Bhupesh-V/areyouok?color=blueviolet" />
   </a>
   <a href="">
     <img alt="Website Status" src="https://img.shields.io/website?down_color=red&down_message=down&up_color=darkgreen&up_message=up&url=https%3A%2F%2Fwebsite.com" />
@@ -44,7 +44,7 @@ Support me by giving a ⭐️ if this project helped you! or just [![Twitter URL
 ## 📝 License
 
 Copyright © 2020 [Bhupesh Varshney](https://github.com/Bhupesh-V).<br />
-This project is [MIT](https://github.com/Bhupesh-V/sample-project/blob/master/LICENSE) licensed.
+This project is [MIT](https://github.com/Bhupesh-V/areyouok/blob/master/LICENSE) licensed.
 
 ## 👋 Contributing
 

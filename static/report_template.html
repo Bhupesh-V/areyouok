@@ -1,0 +1,92 @@
+<html>
+  <head>
+    <title>areyouok: Are your URLs ok?</title>
+    <style>
+        summary {
+          font-size: x-large;
+          margin: 23px;
+        }
+        h1 {
+          text-align: center;
+        }
+        p {
+          text-align: center;
+        }
+        table {
+          margin-left: 22px;
+        }
+        th {
+          font-size: 20px;
+          padding: 12px;
+        }
+        td {
+          padding: 12px;
+        }
+        tr {
+          background: orange;
+        }
+        .c200 {
+          background: #11d111;
+        }
+        .c404 {
+          background: #2daeeb;
+        }
+        .description {
+          font-size: larger;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>AreYouOk URL Health Report ⛑️ </h1>
+    <p class="description">
+    {{.TotalLinks}} URLs were analyzed across {{.TotalFiles}} files under {{.TotalTime}}
+    </p>
+    <details open><summary>All URLs</summary>
+      <table>
+        <tr>
+          <th width="70%">URL</th>
+          <th>Status</th>
+          <th>Message</th>
+          <th>Response Time</th>
+        </tr>
+        {{range $.NotOkurls}}
+        <tr class="c{{.code}}">
+          <td><a href="{{.url}}">{{.url}}</a></td>
+          <td align="center">{{.code}}</td>
+          <td align="center">{{.message}}</td>
+          <td align="center">{{.response_time}}</td>
+        </tr>
+        {{end}}
+      </table>
+    </details>
+    <div class="detailed-health-report">
+      <details open><summary>Detailed Report</summary>
+        <ol>
+          <li>
+            <p><b>repositories.json</b></p>
+            <table>
+              <tr>
+                <th width="70%">URL</th>
+                <th>Status</th>
+                <th>Message</th>
+              </tr>
+              <tr><td><a href="https://test.com">https://test.com</a></td><td>200</td><td>Success</td></tr>
+            </table>
+          </li>
+          <li>
+            <p><b>repositories.json</b></p>
+            <table>
+              <tr>
+                <th width="70%">URL</th>
+                <th>Status</th>
+                <th>Message</th>
+              </tr>
+              <tr><td><a href="https://test.com">https://test.com</a></td><td>200</td><td>Success</td></tr>
+            </table>
+          </li>
+        </ol>
+      </details>
+    </div>
+    <i><p>Report Generated at {{.Time}} on {{.Date}}</p></i>
+  </body>
+</html>
