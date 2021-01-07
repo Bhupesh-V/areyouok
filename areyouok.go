@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	textTemplate "text/template"
 	"time"
 )
 
@@ -38,7 +39,7 @@ var (
 
 func checkLink(link string, wg *sync.WaitGroup, ch chan map[string]string) {
 	defer wg.Done()
-    goStart := time.Now()
+	goStart := time.Now()
 	reqURL, _ := url.Parse(link)
 	req := &http.Request{
 		Method: "GET",
@@ -48,18 +49,18 @@ func checkLink(link string, wg *sync.WaitGroup, ch chan map[string]string) {
 		},
 	}
 	resp, err := http.DefaultClient.Do(req)
-    responseTime := fmt.Sprintf("%.2fs", time.Since(goStart).Seconds())
+	responseTime := fmt.Sprintf("%.2fs", time.Since(goStart).Seconds())
 	if err != nil {
 		// fmt.Printf("Skipping %s due to Error: %s\n", link, err)
 		ch <- map[string]string{"url": link, "message": err.Error()}
 		return
 	}
 	ch <- map[string]string{
-        "url": link, 
-        "code": strconv.Itoa(resp.StatusCode), 
-        "message": http.StatusText(resp.StatusCode),
-        "response_time": responseTime,
-    }
+		"url":           link,
+		"code":          strconv.Itoa(resp.StatusCode),
+		"message":       http.StatusText(resp.StatusCode),
+		"response_time": responseTime,
+	}
 }
 
 func In(a string, list []string) bool {
@@ -130,10 +131,10 @@ func GetLinks(files []string) []string {
 }
 
 func GenerateReport(data []map[string]string, reportType string) {
-    currentDir, err := os.Getwd()
-    if err != nil {
-        fmt.Println(err)
-    }
+	currentDir, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+	}
 	if reportType == "html" {
 		now := time.Now()
 		t, err := template.ParseFiles("static/report_template.html")
@@ -161,14 +162,35 @@ func GenerateReport(data []map[string]string, reportType string) {
 			TotalTime:  totalTime,
 		}
 		t.Execute(f, templateData)
-        fmt.Printf("\nReport Generated at %s", filepath.Join(currentDir, "report.html"))
+		fmt.Printf("\nReport Generated at %s", filepath.Join(currentDir, "report.html"))
 	} else if reportType == "json" {
 		j, err := json.MarshalIndent(data, "", "  ")
 		if err != nil {
 			fmt.Println(err)
 		}
 		err = ioutil.WriteFile("report."+reportType, j, 0644)
-        fmt.Printf("\nReport Generated at %s", filepath.Join(currentDir, "report.json"))
+		fmt.Printf("\nReport Generated at %s", filepath.Join(currentDir, "report.json"))
+	} else if reportType == "txt" {
+		t := textTemplate.Must(textTemplate.New("t1").
+			Parse(`{{.TotalLinks}} URLs were analyzed across {{.TotalFiles}} files in {{ println .TotalTime}}{{"\n"}}Following URLs were found not OK:{{"\n\n"}}{{range $_, $v := $.NotOkurls}}{{ if ne $v.message "OK" }}{{ println $v.url }}{{end}}{{end}}`))
+		templateData := struct {
+			NotOkurls  []map[string]string
+			TotalLinks string
+			TotalFiles string
+			TotalTime  string
+		}{
+			NotOkurls:  data,
+			TotalLinks: strconv.Itoa(totalLinks),
+			TotalFiles: strconv.Itoa(totalFiles),
+			TotalTime:  totalTime,
+		}
+		f, err := os.Create("report.txt")
+		if err != nil {
+			log.Println("File error: ", err)
+			return
+		}
+
+		t.Execute(f, templateData)
 	}
 }
 
@@ -199,7 +221,7 @@ func main() {
 	var (
 		typeOfFile string
 		ignoreDirs string
-		userDir   string
+		userDir    string
 		reportType string
 		dirs       []string
 	)
