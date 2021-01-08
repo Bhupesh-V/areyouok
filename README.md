@@ -1,21 +1,18 @@
-<h1 align="center">AreYouOK</h1>
+<h1 align="center">AreYouOK?</h1>
+<blockquote align="center">A minimal & easy to use URL health checker</blockquote>
 <p align="center">
-<!--  <img src="" />-->
+  <img align="center" alt="cat areyouok logo" height="100px" src="https://user-images.githubusercontent.com/34342551/103980534-0da0e000-51a6-11eb-8e67-f4c41599ce1e.png" />
+  <br><br>
   <a href="https://github.com/Bhupesh-V/areyouok/blob/master/LICENSE">
     <img alt="License: MIT" src="https://img.shields.io/github/license/Bhupesh-V/areyouok" target="_blank" />
   </a>
   <a href="https://github.com/Bhupesh-V/areyouok/issues">
     <img alt="Issues" src="https://img.shields.io/github/issues/Bhupesh-V/areyouok?color=blueviolet" />
   </a>
-  <a href="">
-    <img alt="Website Status" src="https://img.shields.io/website?down_color=red&down_message=down&up_color=darkgreen&up_message=up&url=https%3A%2F%2Fwebsite.com" />
-  </a>
   <a href="https://twitter.com/bhupeshimself">
     <img alt="Twitter: bhupeshimself" src="https://img.shields.io/twitter/follow/bhupeshimself.svg?style=social" target="_blank" />
   </a>
 </p>
-
-> This is a template repository used for creating side-projects.
 
 
 
@@ -31,7 +28,7 @@
 
 ## ☺️ Show your support
 
-Support me by giving a ⭐️ if this project helped you! or just [![Twitter URL](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2FBhupesh-V%2Ftil%2F)](https://twitter.com/intent/tweet?url=https://github.com/Bhupesh-V/til&text=til%20via%20@bhupeshimself)
+Support me by giving a ⭐️ if this project helped you! or just [![Twitter URL](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2FBhupesh-V%2Fareyouok%2F)](https://twitter.com/intent/tweet?url=https://github.com/Bhupesh-V/areyouok&text=areyouok%20via%20@bhupeshimself)
 
 <a href="https://liberapay.com/bhupesh/donate">
   <img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg" width="100">

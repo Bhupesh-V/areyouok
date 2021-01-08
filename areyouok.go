@@ -35,6 +35,7 @@ var (
 	totalTime  string
 	totalFiles int
 	totalLinks int
+    aroVersion string = "dev"
 )
 
 func checkLink(link string, wg *sync.WaitGroup, ch chan map[string]string) {
@@ -228,6 +229,7 @@ func main() {
 	flag.StringVar(&typeOfFile, "t", "md", "Specify type of files to scan")
 	flag.StringVar(&ignoreDirs, "i", "", "Comma separated directory and/or file names to ignore")
 	flag.StringVar(&reportType, "r", "html", "Generate report. Supported formats include json/html")
+    Version := flag.Bool("v", false, "Prints Current AreYouOk Version")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stdout, "AreYouOK URL Health Checker\n")
@@ -237,6 +239,10 @@ func main() {
 		fmt.Fprintf(os.Stdout, "Report Any Bugs to varshneybhupesh@gmail.com\n")
 	}
 	flag.Parse()
+    if *Version {
+      fmt.Println(aroVersion)
+      os.Exit(0)
+    }
 	if ignoreDirs != "" {
 		dirs = strings.Split(ignoreDirs, ",")
 	}

@@ -39,8 +39,24 @@
   <body>
     <h1>AreYouOk URL Health Report ⛑️ </h1>
     <p class="description">
-    {{.TotalLinks}} URLs were analyzed across {{.TotalFiles}} files under {{.TotalTime}}
+    {{.TotalLinks}} URLs were analyzed across {{.TotalFiles}} files in {{.TotalTime}}
     </p>
+    <details open><summary>Not OK URLs</summary>
+      <table>
+        <tr>
+          <th width="70%">URL</th>
+          <th>Message</th>
+        </tr>
+        {{range $_, $v := $.NotOkurls}}
+        {{if ne $v.message "OK"}}
+        <tr class="c{{.code}}">
+          <td><a href="{{$v.url}}">{{$v.url}}</a></td>
+          <td align="center">{{.message}}</td>
+        </tr>
+        {{end}}
+        {{end}}
+      </table>
+    </details>
     <details open><summary>All URLs</summary>
       <table>
         <tr>
@@ -88,5 +104,6 @@
       </details>
     </div>
     <i><p>Report Generated at {{.Time}} on {{.Date}}</p></i>
+    <i><p><a href="https://github.com/Bhupesh-V/areyouok/issues/new/choose">Report Bug</a></p></i>
   </body>
 </html>
