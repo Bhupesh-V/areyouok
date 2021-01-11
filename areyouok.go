@@ -19,17 +19,9 @@ import (
 	"time"
 )
 
-/*
-TODO:
-1. Concurrent reading of files?
-2. Handle localhost URL
-3. Handle ` char in url
-4. Improve --help
-*/
-
 // its not perfect (look for edge cases)
 // https://www.suon.co.uk/product/1/7/3/
-var re = regexp.MustCompile(`https?:\/\/[^)\n,\s\"*]+`)
+var re = regexp.MustCompile(`(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?`)
 
 var (
 	totalTime  string
@@ -127,6 +119,7 @@ func GetLinks(files []string) []string {
 	totalFiles = len(hyperlinks)
 	totalLinks = len(allLinks)
 	fmt.Printf("%d links found across %d files\n\n", len(allLinks), len(hyperlinks))
+    fmt.Println(Indent(hyperlinks))
 
 	return allLinks
 }
@@ -136,9 +129,10 @@ func GenerateReport(data []map[string]string, reportType string) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	if reportType == "html" {
+	if reportType == "html" || reportType == "github" {
 		now := time.Now()
-		t, err := template.ParseFiles("static/report_template.html")
+		t, err := template.ParseFiles(fmt.Sprintf("static/report_%s.html", reportType))
+        // t, err := template.ParseFiles("static/report_template.html")
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -163,7 +157,7 @@ func GenerateReport(data []map[string]string, reportType string) {
 			TotalTime:  totalTime,
 		}
 		t.Execute(f, templateData)
-		fmt.Printf("\nReport Generated at %s", filepath.Join(currentDir, "report.html"))
+		fmt.Printf("\nReport Generated at %s.%s", filepath.Join(currentDir, "report"), reportType)
 	} else if reportType == "json" {
 		j, err := json.MarshalIndent(data, "", "  ")
 		if err != nil {

@@ -37,27 +37,27 @@
     </style>
   </head>
   <body>
-    <h1>AreYouOk URL Health Report ⛑️ </h1>
-    <p class="description">
+<h1>AreYouOk URL Health Report ⛑️ </h1>
+<p class="description">
     {{.TotalLinks}} URLs were analyzed across {{.TotalFiles}} files in {{.TotalTime}}
-    </p>
-    <details open><summary>Not OK URLs</summary>
+</p>
+<details open><summary>Not OK URLs</summary>
       <table>
         <tr>
           <th width="70%">URL</th>
           <th>Message</th>
         </tr>
-        {{range $_, $v := $.NotOkurls}}
-        {{if ne $v.message "OK"}}
-        <tr class="c{{.code}}">
-          <td><a href="{{$v.url}}">{{$v.url}}</a></td>
-          <td align="center">{{.message}}</td>
+        {{- range $_, $v := $.NotOkurls}}
+        {{- if ne $v.message "OK"}}
+        <tr class="c{{print .code -}}">
+          <td><a href="{{print $v.url}}">{{print $v.url -}}</a></td>
+          <td align="center">{{print .message -}}</td>
         </tr>
-        {{end}}
-        {{end}}
+        {{- end}}
+        {{- end}}
       </table>
-    </details>
-    <details open><summary>All URLs</summary>
+</details>
+<details open><summary>All URLs</summary>
       <table>
         <tr>
           <th width="70%">URL</th>
@@ -65,16 +65,16 @@
           <th>Message</th>
           <th>Response Time</th>
         </tr>
-        {{range $.NotOkurls}}
-        <tr class="c{{.code}}">
-          <td><a href="{{.url}}">{{.url}}</a></td>
-          <td align="center">{{.code}}</td>
-          <td align="center">{{.message}}</td>
-          <td align="center">{{.response_time}}</td>
+        {{- range $.NotOkurls}}
+        <tr class="c{{print .code}}">
+          <td><a href="{{print .url}}">{{print .url -}}</a></td>
+          <td align="center">{{print .code -}}</td>
+          <td align="center">{{print .message -}}</td>
+          <td align="center">{{print .response_time -}}</td>
         </tr>
-        {{end}}
+        {{- end}}
       </table>
-    </details>
+</details>
     <div class="detailed-health-report">
       <details open><summary>Detailed Report</summary>
         <ol>
@@ -103,7 +103,7 @@
         </ol>
       </details>
     </div>
-    <i><p>Report Generated at {{.Time}} on {{.Date}}</p></i>
-    <i><p><a href="https://github.com/Bhupesh-V/areyouok/issues/new/choose">Report Bug</a></p></i>
+<i><p>Report Generated at {{.Time}} on {{.Date}}</p></i>
+<i><p><a href="https://github.com/Bhupesh-V/areyouok/issues/new/choose"><b>🐞 Report Bug </b></a> | <a href="https://bhupesh-v.github.io/about/#-support"><b>💰 Support</b></a> | <a href="https://github.com/Bhupesh-V/areyouok"><b>⭐ Give us a Star</b></a></p></i>
   </body>
 </html>
