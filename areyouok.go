@@ -119,28 +119,21 @@ func GetLinks(files []string) []string {
 	totalFiles = len(hyperlinks)
 	totalLinks = len(allLinks)
 	fmt.Printf("%d links found across %d files\n\n", len(allLinks), len(hyperlinks))
-    fmt.Println(Indent(hyperlinks))
+    // fmt.Println(Indent(hyperlinks))
 
 	return allLinks
 }
 
 func GenerateReport(data []map[string]string, reportType string) {
-	currentDir, err := os.Getwd()
-	if err != nil {
-		fmt.Println(err)
-	}
+	currentDir, _ := os.Getwd()
+
 	if reportType == "html" || reportType == "github" {
 		now := time.Now()
 		t, err := template.ParseFiles(fmt.Sprintf("static/report_%s.html", reportType))
-        // t, err := template.ParseFiles("static/report_template.html")
 		if err != nil {
 			fmt.Println(err)
 		}
-		f, err := os.Create("report.html")
-		if err != nil {
-			log.Println("File error: ", err)
-			return
-		}
+		f, _ := os.Create("report.html")
 		templateData := struct {
 			NotOkurls  []map[string]string
 			Date       string
@@ -157,14 +150,12 @@ func GenerateReport(data []map[string]string, reportType string) {
 			TotalTime:  totalTime,
 		}
 		t.Execute(f, templateData)
-		fmt.Printf("\nReport Generated at %s.%s", filepath.Join(currentDir, "report"), reportType)
 	} else if reportType == "json" {
 		j, err := json.MarshalIndent(data, "", "  ")
 		if err != nil {
 			fmt.Println(err)
 		}
 		err = ioutil.WriteFile("report."+reportType, j, 0644)
-		fmt.Printf("\nReport Generated at %s", filepath.Join(currentDir, "report.json"))
 	} else if reportType == "txt" {
 		t := textTemplate.Must(textTemplate.New("t1").
 			Parse(`{{.TotalLinks}} URLs were analyzed across {{.TotalFiles}} files in {{ println .TotalTime}}{{"\n"}}Following URLs were found not OK:{{"\n\n"}}{{range $_, $v := $.NotOkurls}}{{ if ne $v.message "OK" }}{{ println $v.url }}{{end}}{{end}}`))
@@ -179,14 +170,10 @@ func GenerateReport(data []map[string]string, reportType string) {
 			TotalFiles: strconv.Itoa(totalFiles),
 			TotalTime:  totalTime,
 		}
-		f, err := os.Create("report.txt")
-		if err != nil {
-			log.Println("File error: ", err)
-			return
-		}
-
+		f, _ := os.Create("report.txt")
 		t.Execute(f, templateData)
 	}
+    fmt.Printf("\nReport Generated at %s.%s", filepath.Join(currentDir, "report"), reportType)
 }
 
 func Driver(links []string) []map[string]string {
@@ -222,7 +209,7 @@ func main() {
 	)
 	flag.StringVar(&typeOfFile, "t", "md", "Specify type of files to scan")
 	flag.StringVar(&ignoreDirs, "i", "", "Comma separated directory and/or file names to ignore")
-	flag.StringVar(&reportType, "r", "html", "Generate report. Supported formats include json/html")
+	flag.StringVar(&reportType, "r", "html", "Generate report. Supported formats include json, html, txt & github")
     Version := flag.Bool("v", false, "Prints Current AreYouOk Version")
 
 	flag.Usage = func() {
@@ -246,7 +233,10 @@ func main() {
 	} else {
 		userDir = flag.Args()[0]
 	}
-
+    if !In(reportType, []string{"github", "json", "txt", "html"}) {
+        fmt.Printf("%s in not a supported report format\n", reportType)
+        os.Exit(1)
+    }
 	var validFiles = GetFiles(userDir, typeOfFile, dirs)
 	data := Driver(GetLinks(validFiles))
 	GenerateReport(data, reportType)
