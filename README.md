@@ -4,10 +4,10 @@
   <img align="center" alt="cat areyouok logo" height="100px" src="https://user-images.githubusercontent.com/34342551/103980534-0da0e000-51a6-11eb-8e67-f4c41599ce1e.png" />
   <br><br>
   <a href="https://goreportcard.com/report/github.com/Bhupesh-V/areyouok">
-    <img alt="Go report card" src="https://goreportcard.com/badge/github.com/Bhupesh-V/areyouok">
+    <img alt="Go report card" src="https://goreportcard.com/badge/github.com/Bhupesh-V/areyouok" target="_blank">
   </a>
   <a href="https://github.com/Bhupesh-V/areyouok/blob/master/LICENSE">
-    <img alt="License: MIT" src="https://img.shields.io/github/license/Bhupesh-V/areyouok" target="_blank" />
+    <img alt="License" src="https://img.shields.io/github/license/Bhupesh-V/areyouok?color=blue" target="_blank">
   </a>
   <a href="https://github.com/Bhupesh-V/areyouok/issues">
     <img alt="Issues" src="https://img.shields.io/github/issues/Bhupesh-V/areyouok?color=blueviolet" />
@@ -16,7 +16,6 @@
     <img alt="Twitter: bhupeshimself" src="https://img.shields.io/twitter/follow/bhupeshimself.svg?style=social" target="_blank" />
   </a>
 </p>
-
 
 
 ## Author
