@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -20,14 +21,13 @@ import (
 )
 
 // its not perfect (look for edge cases)
-// https://www.suon.co.uk/product/1/7/3/
 var re = regexp.MustCompile(`(http|ftp|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?`)
 
 var (
 	totalTime  string
 	totalFiles int
 	totalLinks int
-    aroVersion string = "dev"
+	aroVersion string = "dev"
 )
 
 func checkLink(link string, wg *sync.WaitGroup, ch chan map[string]string) {
@@ -44,7 +44,6 @@ func checkLink(link string, wg *sync.WaitGroup, ch chan map[string]string) {
 	resp, err := http.DefaultClient.Do(req)
 	responseTime := fmt.Sprintf("%.2fs", time.Since(goStart).Seconds())
 	if err != nil {
-		// fmt.Printf("Skipping %s due to Error: %s\n", link, err)
 		ch <- map[string]string{"url": link, "message": err.Error()}
 		return
 	}
@@ -119,17 +118,19 @@ func GetLinks(files []string) []string {
 	totalFiles = len(hyperlinks)
 	totalLinks = len(allLinks)
 	fmt.Printf("%d links found across %d files\n\n", len(allLinks), len(hyperlinks))
-    // fmt.Println(Indent(hyperlinks))
+	// fmt.Println(Indent(hyperlinks))
 
 	return allLinks
 }
 
 func GenerateReport(data []map[string]string, reportType string) {
 	currentDir, _ := os.Getwd()
+	//go:embed static/*
+	var report_templates embed.FS
 
 	if reportType == "html" || reportType == "github" {
 		now := time.Now()
-		t, err := template.ParseFiles(fmt.Sprintf("static/report_%s.html", reportType))
+		t, err := template.ParseFS(report_templates, fmt.Sprintf("static/report_%s.html", reportType))
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -173,7 +174,7 @@ func GenerateReport(data []map[string]string, reportType string) {
 		f, _ := os.Create("report.txt")
 		t.Execute(f, templateData)
 	}
-    fmt.Printf("\nReport Generated at %s.%s", filepath.Join(currentDir, "report"), reportType)
+	fmt.Printf("\nReport Generated: %s.%s", filepath.Join(currentDir, "report"), reportType)
 }
 
 func Driver(links []string) []map[string]string {
@@ -210,7 +211,7 @@ func main() {
 	flag.StringVar(&typeOfFile, "t", "md", "Specify type of files to scan")
 	flag.StringVar(&ignoreDirs, "i", "", "Comma separated directory and/or file names to ignore")
 	flag.StringVar(&reportType, "r", "html", "Generate report. Supported formats include json, html, txt & github")
-    Version := flag.Bool("v", false, "Prints Current AreYouOk Version")
+	Version := flag.Bool("v", false, "Prints Current AreYouOk Version")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stdout, "AreYouOK URL Health Checker\n")
@@ -220,10 +221,10 @@ func main() {
 		fmt.Fprintf(os.Stdout, "Report Any Bugs to varshneybhupesh@gmail.com\n")
 	}
 	flag.Parse()
-    if *Version {
-      fmt.Println(aroVersion)
-      os.Exit(0)
-    }
+	if *Version {
+		fmt.Println(aroVersion)
+		os.Exit(0)
+	}
 	if ignoreDirs != "" {
 		dirs = strings.Split(ignoreDirs, ",")
 	}
@@ -233,10 +234,10 @@ func main() {
 	} else {
 		userDir = flag.Args()[0]
 	}
-    if !In(reportType, []string{"github", "json", "txt", "html"}) {
-        fmt.Printf("%s in not a supported report format\n", reportType)
-        os.Exit(1)
-    }
+	if !In(reportType, []string{"github", "json", "txt", "html"}) {
+		fmt.Printf("%s in not a supported report format\n", reportType)
+		os.Exit(1)
+	}
 	var validFiles = GetFiles(userDir, typeOfFile, dirs)
 	data := Driver(GetLinks(validFiles))
 	GenerateReport(data, reportType)
