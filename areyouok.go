@@ -55,7 +55,7 @@ func checkLink(link string, wg *sync.WaitGroup, ch chan map[string]string) {
 	}
 }
 
-func In(a string, list []string) bool {
+func in(a string, list []string) bool {
 	for _, b := range list {
 		if b == a {
 			return true
@@ -64,7 +64,7 @@ func In(a string, list []string) bool {
 	return false
 }
 
-func GetFiles(userPath string, filetype string, ignore []string) []string {
+func getFiles(userPath string, filetype string, ignore []string) []string {
 	var validFiles []string
 
 	err := filepath.Walk(userPath,
@@ -73,11 +73,11 @@ func GetFiles(userPath string, filetype string, ignore []string) []string {
 				return err
 			}
 			if info.IsDir() {
-				if In(info.Name(), ignore) {
+				if in(info.Name(), ignore) {
 					return filepath.SkipDir
 				}
 			}
-			if strings.HasSuffix(filepath.Base(path), filetype) && !In(info.Name(), ignore) {
+			if strings.HasSuffix(filepath.Base(path), filetype) && !in(info.Name(), ignore) {
 				validFiles = append(validFiles, path)
 			}
 			return nil
@@ -88,7 +88,7 @@ func GetFiles(userPath string, filetype string, ignore []string) []string {
 	return validFiles
 }
 
-func Indent(v interface{}) string {
+func indent(v interface{}) string {
 	b, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
 		return fmt.Sprintf("%#v", v)
@@ -96,10 +96,10 @@ func Indent(v interface{}) string {
 	return string(b)
 }
 
-func GetLinks(files []string) ([]map[string]string, map[string][]string) {
+func getLinks(files []string) ([]map[string]string, map[string][]string) {
 	hyperlinks := make(map[string][]string)
 	var allLinks []string
-	var all_hyperlinks []map[string]string
+	var allHyperlinks []map[string]string
 
 	for _, file := range files {
 		data, err := ioutil.ReadFile(file)
@@ -115,26 +115,26 @@ func GetLinks(files []string) ([]map[string]string, map[string][]string) {
 	for filepath, v := range hyperlinks {
 		allLinks = append(allLinks, v...)
 		for _, link := range v {
-			all_hyperlinks = append(all_hyperlinks, map[string]string{"file": filepath, "url": link})
+			allHyperlinks = append(allHyperlinks, map[string]string{"file": filepath, "url": link})
 		}
 	}
 	// yay! Jackpot!!
 	totalFiles = len(hyperlinks)
 	totalLinks = len(allLinks)
 	fmt.Printf("%d links found across %d files\n\n", len(allLinks), len(hyperlinks))
-	// fmt.Println(Indent(hyperlinks))
+	// fmt.Println(indent(hyperlinks))
 
-	return all_hyperlinks, hyperlinks
+	return allHyperlinks, hyperlinks
 }
 
-func GenerateReport(data []map[string]string, validfiles map[string][]string, linkfr map[string]map[string]string, reportType string) {
+func generateReport(data []map[string]string, validfiles map[string][]string, linkfr map[string]map[string]string, reportType string) {
 	currentDir, _ := os.Getwd()
 	//go:embed static/*
-	var report_templates embed.FS
+	var reportTemplates embed.FS
 
 	if reportType == "html" || reportType == "github" {
 		now := time.Now()
-		t, err := template.ParseFS(report_templates, fmt.Sprintf("static/report_%s.html", reportType))
+		t, err := template.ParseFS(reportTemplates, fmt.Sprintf("static/report_%s.html", reportType))
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -185,7 +185,7 @@ func GenerateReport(data []map[string]string, validfiles map[string][]string, li
 	fmt.Printf("\nReport Generated: %s.%s", filepath.Join(currentDir, "report"), reportType)
 }
 
-func Driver(links []map[string]string) []map[string]string {
+func driver(links []map[string]string) []map[string]string {
 	var wg sync.WaitGroup
 	var notoklinks []map[string]string
 	start := time.Now()
@@ -202,7 +202,7 @@ func Driver(links []map[string]string) []map[string]string {
 		notoklinks = append(notoklinks, <-ch)
 		fmt.Printf("\rAnalyzing %d/%d URLs", i+1, len(links))
 	}
-	// fmt.Println(Indent(notoklinks))
+	// fmt.Println(indent(notoklinks))
 	totalTime = fmt.Sprintf("%.2fs", time.Since(start).Seconds())
 	fmt.Printf("\nTotal Time: %.2fs\n", time.Since(start).Seconds())
 	return notoklinks
@@ -242,17 +242,17 @@ func main() {
 	} else {
 		userDir = flag.Args()[0]
 	}
-	if !In(reportType, []string{"github", "json", "txt", "html"}) {
+	if !in(reportType, []string{"github", "json", "txt", "html"}) {
 		fmt.Printf("%s in not a supported report format\n", reportType)
 		os.Exit(1)
 	}
-	var validFiles = GetFiles(userDir, typeOfFile, dirs)
-	links, valid := GetLinks(validFiles)
-	data := Driver(links)
+	var validFiles = getFiles(userDir, typeOfFile, dirs)
+	links, valid := getLinks(validFiles)
+	data := driver(links)
 	linkfr := make(map[string]map[string]string)
 	for _, v := range data {
 		urlMap := map[string]string{"code": v["code"], "message": v["message"]}
 		linkfr[v["url"]] = urlMap
 	}
-	GenerateReport(data, valid, linkfr, reportType)
+	generateReport(data, valid, linkfr, reportType)
 }

@@ -1,5 +1,5 @@
 <h1 align="center">AreYouOK?</h1>
-<blockquote align="center">A minimal & easy to use URL health checker</blockquote>
+<blockquote align="center">A minimal, fast & easy to use URL health checker</blockquote>
 <p align="center">
   <img align="center" alt="cat areyouok logo" height="100px" src="https://user-images.githubusercontent.com/34342551/103980534-0da0e000-51a6-11eb-8e67-f4c41599ce1e.png" />
   <br><br>
@@ -19,10 +19,10 @@
 
 ## Who is `AreYouOk` made for ?
 
-- Open-source package maintainers 📦️:<br>
+- FOSS Package Maintainers 📦️:<br>
   With packages comes documentation which needs to be constantly updated & checked for dead/non-functioning URLs. AreYouOk integrates seamlessly with Github Actions (since its a CLI).
 - Tech Bloggers ✍️ :<br>
-  If you are someone who writes countless tutorials & owns the source for your website, Use areyouok to make sure your blogs don't contain and non-functioning URLs
+  If you are someone who writes countless tutorials & owns the source for your website, Use areyouok to make sure your blogs don't contain any non-functioning URLs
 - Literally anyone who wants to check a bunch of URLs for being dead ☠️  or not
 
 With time _AreYouOk_ can evolve to analyze URLs over a remote resource as well, send your ideas ✨️ through [**Discussions**](https://github.com/Bhupesh-V/areyouok/discussions)
@@ -61,6 +61,13 @@ Download builds for other architectures from [**releases**](https://github.com/B
 
 
 ## Usage
+
+AreYouOk provides 3 optional arguments followed by a directory path (default: current directory)
+1. `-t` type of files to scan for links
+2. `-i` list of files or directories to ignore for links (node_modules, .git)
+3. `-r` type of report to generate
+
+Some example usages:
 
 - Analyze all HTML files for hyperlinks. The default directory path is set to current directory.
   ```bash
@@ -146,9 +153,9 @@ Download builds for other architectures from [**releases**](https://github.com/B
    ```bash
    go test -v
    ```
-3. Lint the project with `go fmt`
+3. Lint the project with `golint`
    ```bash
-   go fmt -w areyouok/areyouok.go
+   golint areyouok/areyouok.go
    ```
 
 ## 📝 Changelog
