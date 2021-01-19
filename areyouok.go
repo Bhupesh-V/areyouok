@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+    // "reflect"
 	"log"
 	"net/http"
 	"net/url"
@@ -29,6 +30,14 @@ var (
 	totalLinks int
 	aroVersion string = "dev"
 )
+
+type HyperLink struct {
+	Link               string
+	File               string
+	Response_time      string
+	Http_response_code string
+	Http_message       string
+}
 
 func checkLink(link string, wg *sync.WaitGroup, ch chan map[string]string) {
 	defer wg.Done()
@@ -96,8 +105,9 @@ func Indent(v interface{}) string {
 	return string(b)
 }
 
-func GetLinks(files []string) []string {
+func GetLinks(files []string) []*HyperLink {
 	hyperlinks := make(map[string][]string)
+    var all_hyperlinks []*HyperLink
 	var allLinks []string
 
 	for _, file := range files {
@@ -111,19 +121,32 @@ func GetLinks(files []string) []string {
 			hyperlinks[file] = submatchall
 		}
 	}
-	for _, v := range hyperlinks {
+    // fmt.Println(Indent(hyperlinks))
+    fmt.Println(len(hyperlinks))
+	for filepath, v := range hyperlinks {
 		allLinks = append(allLinks, v...)
+        for _, link := range v {
+            // fmt.Println(r)
+            all_hyperlinks = append(all_hyperlinks, &HyperLink{Link: link, File: filepath})
+            // fmt.Println(all_hyperlinks[link].File)
+            // fmt.Println(len(all_hyperlinks))
+        }
 	}
+    // fmt.Println(reflect.ValueOf(all_hyperlinks).MapKeys())
+    fmt.Println(len(all_hyperlinks))
+    fmt.Println(all_hyperlinks[3].File)
+    fmt.Println(all_hyperlinks[3].Link)
+    // fmt.Println(Indent(allLinks))
 	// yay! Jackpot!!
 	totalFiles = len(hyperlinks)
 	totalLinks = len(allLinks)
 	fmt.Printf("%d links found across %d files\n\n", len(allLinks), len(hyperlinks))
 	// fmt.Println(Indent(hyperlinks))
 
-	return allLinks
+	return all_hyperlinks
 }
 
-func GenerateReport(data []map[string]string, reportType string) {
+func GenerateReport(data []*HyperLink, reportType string) {
 	currentDir, _ := os.Getwd()
 	//go:embed static/*
 	var report_templates embed.FS
@@ -136,7 +159,7 @@ func GenerateReport(data []map[string]string, reportType string) {
 		}
 		f, _ := os.Create("report.html")
 		templateData := struct {
-			NotOkurls  []map[string]string
+			NotOkurls  []*HyperLink
 			Date       string
 			Time       string
 			TotalLinks string
@@ -161,7 +184,7 @@ func GenerateReport(data []map[string]string, reportType string) {
 		t := textTemplate.Must(textTemplate.New("t1").
 			Parse(`{{.TotalLinks}} URLs were analyzed across {{.TotalFiles}} files in {{ println .TotalTime}}{{"\n"}}Following URLs were found not OK:{{"\n\n"}}{{range $_, $v := $.NotOkurls}}{{ if ne $v.message "OK" }}{{ println $v.url }}{{end}}{{end}}`))
 		templateData := struct {
-			NotOkurls  []map[string]string
+			NotOkurls  []*HyperLink
 			TotalLinks string
 			TotalFiles string
 			TotalTime  string
@@ -177,27 +200,33 @@ func GenerateReport(data []map[string]string, reportType string) {
 	fmt.Printf("\nReport Generated: %s.%s", filepath.Join(currentDir, "report"), reportType)
 }
 
-func Driver(links []string) []map[string]string {
+func Driver(data []*HyperLink) []*HyperLink {
 	var wg sync.WaitGroup
-	var notoklinks []map[string]string
+	var analyzed_urls map[string]string
 	start := time.Now()
-	ch := make(chan map[string]string, len(links)) //unbuffered channel
-	wg.Add(len(links))
-	for _, url := range links {
-		go checkLink(url, &wg, ch)
+	ch := make(chan map[string]string, len(data)) //unbuffered channel
+	wg.Add(len(data))
+	for _, d := range data {
+		go checkLink(d.Link, &wg, ch)
 	}
 	go func() {
 		wg.Wait()
 		close(ch)
 	}()
-	for i := range links {
-		notoklinks = append(notoklinks, <-ch)
-		fmt.Printf("\rAnalyzing %d/%d URLs", i+1, len(links))
+    count := 0
+	for _, v := range data {
+		analyzed_urls = <-ch
+        // fmt.Println(analyzed_urls["code"])
+        v.Http_response_code = analyzed_urls["code"]
+        v.Http_message = analyzed_urls["message"]
+        v.Response_time = analyzed_urls["response_time"]
+        count += 1
+        fmt.Printf("\rAnalyzing %d/%d URLs", count, totalLinks)
 	}
-	// fmt.Println(Indent(notoklinks))
+	// fmt.Println(Indent(analyzed_urls))
 	totalTime = fmt.Sprintf("%.2fs", time.Since(start).Seconds())
 	fmt.Printf("\nTotal Time: %.2fs\n", time.Since(start).Seconds())
-	return notoklinks
+    return data
 }
 
 func main() {
@@ -239,6 +268,6 @@ func main() {
 		os.Exit(1)
 	}
 	var validFiles = GetFiles(userDir, typeOfFile, dirs)
-	data := Driver(GetLinks(validFiles))
+    data := Driver(GetLinks(validFiles))
 	GenerateReport(data, reportType)
 }

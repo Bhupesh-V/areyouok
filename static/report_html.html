@@ -47,11 +47,11 @@
           <th width="70%">URL</th>
           <th>Message</th>
         </tr>
-        {{- range $_, $v := $.NotOkurls}}
-        {{- if ne $v.message "OK"}}
-        <tr class="c{{print .code -}}">
-          <td><a href="{{print $v.url}}">{{print $v.url -}}</a></td>
-          <td align="center">{{print .message -}}</td>
+        {{- range $_, $value := $.NotOkurls}}
+        {{- if ne $value.Http_message "OK"}}
+        <tr class="c{{print $value.Http_response_code -}}">
+          <td><a href="{{print $value.Link}}">{{print $value.Link -}}</a></td>
+          <td align="center">{{print $value.Http_message -}}</td>
         </tr>
         {{- end}}
         {{- end}}
@@ -65,12 +65,12 @@
           <th>Message</th>
           <th>Response Time</th>
         </tr>
-        {{- range $.NotOkurls}}
-        <tr class="c{{print .code}}">
-          <td><a href="{{print .url}}">{{print .url -}}</a></td>
-          <td align="center">{{print .code -}}</td>
-          <td align="center">{{print .message -}}</td>
-          <td align="center">{{print .response_time -}}</td>
+        {{- range $k, $v := $.NotOkurls}}
+        <tr class="c{{print $v.Http_response_code}}">
+          <td><a href="{{print $k}}">{{print $k -}}</a></td>
+          <td align="center">{{print $v.Http_response_code -}}</td>
+          <td align="center">{{print $v.Http_response_message -}}</td>
+          <td align="center">{{print $v.Response_time -}}</td>
         </tr>
         {{- end}}
       </table>
