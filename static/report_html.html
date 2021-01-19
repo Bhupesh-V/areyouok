@@ -12,12 +12,17 @@
         p {
           text-align: center;
         }
+        .filepath {
+          text-align: left;
+        }
         table {
           margin-left: 22px;
         }
         th {
           font-size: 20px;
           padding: 12px;
+          background: #242424;
+          color: white;
         }
         td {
           padding: 12px;
@@ -57,7 +62,7 @@
         {{- end}}
       </table>
 </details>
-<details open><summary>All URLs</summary>
+<details><summary>All URLs</summary>
       <table>
         <tr>
           <th width="70%">URL</th>
@@ -76,30 +81,27 @@
       </table>
 </details>
     <div class="detailed-health-report">
-      <details open><summary>Detailed Report</summary>
+      <details><summary>Detailed Report</summary>
         <ol>
+          {{- range $k, $v := $.ValidFiles}}
           <li>
-            <p><b>repositories.json</b></p>
-            <table>
+            <p class="filepath"><b><a href="{{$k}}">{{$k}}</a></b></p>
+            <table style="width:100%;margin-left: 0px;">
               <tr>
                 <th width="70%">URL</th>
                 <th>Status</th>
                 <th>Message</th>
               </tr>
-              <tr><td><a href="https://test.com">https://test.com</a></td><td>200</td><td>Success</td></tr>
-            </table>
-          </li>
-          <li>
-            <p><b>repositories.json</b></p>
-            <table>
-              <tr>
-                <th width="70%">URL</th>
-                <th>Status</th>
-                <th>Message</th>
+              {{- range $url := $v}}
+              <tr class="c{{index (index $.ReLinks $url) "code" -}}">
+                <td><a href="">{{$url}}</a></td> 
+                <td align="center">{{index (index $.ReLinks $url) "code"}}</td> 
+                <td align="center">{{index (index $.ReLinks $url) "message"}}</td>
               </tr>
-              <tr><td><a href="https://test.com">https://test.com</a></td><td>200</td><td>Success</td></tr>
+              {{- end}}
             </table>
           </li>
+          {{- end}}
         </ol>
       </details>
     </div>

@@ -17,16 +17,143 @@
   </a>
 </p>
 
+## Who is `AreYouOk` made for ?
 
-## Author
+- Open-source package maintainers 📦️:<br>
+  With packages comes documentation which needs to be constantly updated & checked for dead/non-functioning URLs. AreYouOk integrates seamlessly with Github Actions (since its a CLI).
+- Tech Bloggers ✍️ :<br>
+  If you are someone who writes countless tutorials & owns the source for your website, Use areyouok to make sure your blogs don't contain and non-functioning URLs
+- Literally anyone who wants to check a bunch of URLs for being dead ☠️  or not
 
-:bust_in_silhouette: **Bhupesh Varshney**
+With time _AreYouOk_ can evolve to analyze URLs over a remote resource as well, send your ideas ✨️ through [**Discussions**](https://github.com/Bhupesh-V/areyouok/discussions)
 
-- Web : [bhupesh-v.github.io](https://bhupesh-v.github.io)
-- Twitter : [@bhupeshimself](https://twitter.com/bhupeshimself)
-- DEV : [bhupesh](https://dev.to/bhupesh)
+## Installation
 
-[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
+- Linux
+  ```bash
+  curl -sO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-linux-amd64
+  # or
+  wget -sO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-linux-amd64
+  ```
+
+- MacOS
+  ```bash
+  curl -sO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-darwin-amd64
+  # or
+  wget -sO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-darwin-amd64
+  ```
+
+- Windows
+  ```bash
+  curl -sO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-windows-amd64
+  # or
+  wget -sO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-windows-amd64
+  ```
+
+Check installation by running `areyouok -v`
+```bash
+$ mv areyouok-darwin-amd64 areyouok
+$ areyouok -v
+v1.0.0
+```
+
+Download builds for other architectures from [**releases**](https://github.com/Bhupesh-V/areyouok/releases/latest)
+
+
+## Usage
+
+- Analyze all HTML files for hyperlinks. The default directory path is set to current directory.
+  ```bash
+  areyouok -t=html Documents/my-directory
+  ```
+  There is not limitation on file type, to analyze json files use `-t=json`. The default type is set to `md` (markdown)
+
+- To ignore certain directories or file-types use the ignore `-i` flag.
+  ```bash
+  areyouok -i=_layouts,.git,_site,README.md,build.py,USAGE.md
+  ```
+
+- By default AreYouOk outputs analyzed data directly into console. To generate a report, use the `-r` flag
+  ```bash
+  areyouok -i=_layouts,.git,_site,README.md,build.py,USAGE.md -r=html ~/Documents/til/
+  ```
+  Currently supported report formats are: `json`, `txt`, `html` & `github`.
+  Default report type is set to `html`.
+
+  Different report types provide different levels of information which is briefly summarized below:
+  1. **JSON** (report.json)<br>
+     The JSON report can be used for other computational tasks as required (E.g emailing dead urls to yourself)
+     ```json
+     [
+        {
+                "message": "Get http://127.0.0.1:8000/: dial tcp 127.0.0.1:8000: connect: connection refused",
+                "url": "http://127.0.0.1:8000/"
+        },
+        {
+                "code": "200",
+                "message": "OK",
+                "response_time": "0.77s",
+                "url": "http://prnbs.github.io/projects/regular-expression-parser/"
+        },
+        {
+                "code": "200",
+                "message": "OK",
+                "response_time": "2.59s",
+                "url": "https://swtch.com/~rsc/regexp/regexp1.html"
+        },
+        ...
+     ]
+     ```
+
+  2. **Text** (report.txt)<br>
+     The text format just lists the URLs which were not successfully fetched. Useful if you just want dead urls.
+     Text report also puts the no.of hyperlinks analyzed along with total files & total reponse time.
+
+     ```
+     74 URLs were analyzed across 31 files in 21.69s
+
+     Following URLs are not OK:
+     http://freecodecamp.org`
+     http://127.0.0.1:8000/
+     https://drive.google.com/uc?export=view&id=<INSERT-ID>`
+     https://drive.google.com/file/d/
+     https://drive.google.com/uc?export=view&id=$get_last
+     https://github.com/codeclassroom/PlagCheck/blob/master/docs/docs.md
+     https://bhupeshv.me/30-Seconds-of-C++/
+     ```
+
+  3. **HTML** (report.html)<br>
+     The html report is the most superior formats of all & can be used to have a visual representaion of analyzed links.<br>
+     Below is demo of how this HTML report looks like, [**you can see it live**]()
+     ![report-latest](https://user-images.githubusercontent.com/34342551/105046278-e80db380-5a8e-11eb-8371-124fae8b3d7f.png)
+
+  4. **GitHub** (report.github)<br>
+     The github report format is well suited if you are utilizing Github Actions. The format generated is largely HTML, compatible with github's commonmark markdown renderer.<br>
+     <!-- Below is a demo of a Github Action which reports the analyzed URLs through github issues. -->
+
+
+## Development
+
+#### Prerequisites
+
+- Go 1.16
+
+1. Clone the repository.
+   ```bash
+   git https://github.com/Bhupesh-V/areyouok.git
+   ```
+2. Run tests.
+   ```bash
+   go test -v
+   ```
+3. Lint the project with `go fmt`
+   ```bash
+   go fmt -w areyouok/areyouok.go
+   ```
+
+## 📝 Changelog
+
+See the [CHANGELOG.md](CHANGELOG.md) file for details.
 
 ## ☺️ Show your support
 

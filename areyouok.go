@@ -96,9 +96,10 @@ func Indent(v interface{}) string {
 	return string(b)
 }
 
-func GetLinks(files []string) []string {
+func GetLinks(files []string) ([]map[string]string, map[string][]string) {
 	hyperlinks := make(map[string][]string)
 	var allLinks []string
+	var all_hyperlinks []map[string]string
 
 	for _, file := range files {
 		data, err := ioutil.ReadFile(file)
@@ -111,8 +112,11 @@ func GetLinks(files []string) []string {
 			hyperlinks[file] = submatchall
 		}
 	}
-	for _, v := range hyperlinks {
+	for filepath, v := range hyperlinks {
 		allLinks = append(allLinks, v...)
+		for _, link := range v {
+			all_hyperlinks = append(all_hyperlinks, map[string]string{"file": filepath, "url": link})
+		}
 	}
 	// yay! Jackpot!!
 	totalFiles = len(hyperlinks)
@@ -120,10 +124,10 @@ func GetLinks(files []string) []string {
 	fmt.Printf("%d links found across %d files\n\n", len(allLinks), len(hyperlinks))
 	// fmt.Println(Indent(hyperlinks))
 
-	return allLinks
+	return all_hyperlinks, hyperlinks
 }
 
-func GenerateReport(data []map[string]string, reportType string) {
+func GenerateReport(data []map[string]string, validfiles map[string][]string, linkfr map[string]map[string]string, reportType string) {
 	currentDir, _ := os.Getwd()
 	//go:embed static/*
 	var report_templates embed.FS
@@ -137,6 +141,8 @@ func GenerateReport(data []map[string]string, reportType string) {
 		f, _ := os.Create("report.html")
 		templateData := struct {
 			NotOkurls  []map[string]string
+			ValidFiles map[string][]string
+			ReLinks    map[string]map[string]string
 			Date       string
 			Time       string
 			TotalLinks string
@@ -144,6 +150,8 @@ func GenerateReport(data []map[string]string, reportType string) {
 			TotalTime  string
 		}{
 			NotOkurls:  data,
+			ValidFiles: validfiles,
+			ReLinks:    linkfr,
 			Date:       now.Format("January 2, 2006"),
 			Time:       now.Format(time.Kitchen),
 			TotalLinks: strconv.Itoa(totalLinks),
@@ -177,14 +185,14 @@ func GenerateReport(data []map[string]string, reportType string) {
 	fmt.Printf("\nReport Generated: %s.%s", filepath.Join(currentDir, "report"), reportType)
 }
 
-func Driver(links []string) []map[string]string {
+func Driver(links []map[string]string) []map[string]string {
 	var wg sync.WaitGroup
 	var notoklinks []map[string]string
 	start := time.Now()
 	ch := make(chan map[string]string, len(links)) //unbuffered channel
 	wg.Add(len(links))
-	for _, url := range links {
-		go checkLink(url, &wg, ch)
+	for _, v := range links {
+		go checkLink(v["url"], &wg, ch)
 	}
 	go func() {
 		wg.Wait()
@@ -239,6 +247,12 @@ func main() {
 		os.Exit(1)
 	}
 	var validFiles = GetFiles(userDir, typeOfFile, dirs)
-	data := Driver(GetLinks(validFiles))
-	GenerateReport(data, reportType)
+	links, valid := GetLinks(validFiles)
+	data := Driver(links)
+	linkfr := make(map[string]map[string]string)
+	for _, v := range data {
+		urlMap := map[string]string{"code": v["code"], "message": v["message"]}
+		linkfr[v["url"]] = urlMap
+	}
+	GenerateReport(data, valid, linkfr, reportType)
 }
