@@ -1,19 +1,49 @@
 package main
 
 import (
-    "testing"
+	"testing"
 )
 
 func TestInA(t *testing.T) {
-    ans := in("test", []string{"test", "sample"})
-    if ans != true {
-        t.Errorf("In() want %s, want %s", "false", "true")
-    }
+	ans := in("test", []string{"test", "sample"})
+	if ans != true {
+		t.Errorf("In() want %s, want %s", "false", "true")
+	}
 }
 
 func TestInB(t *testing.T) {
-    ans := in("nice", []string{"test", "sample"})
-    if ans != false {
-        t.Errorf("In() want %s, want %s", "true", "false")
-    }
+	ans := in("nice", []string{"test", "sample"})
+	if ans != false {
+		t.Errorf("In() want %s, want %s", "true", "false")
+	}
+}
+
+func TestRegExGood(t *testing.T) {
+	good_urls := []string{
+		"https://good.com",
+		"http://work.io",
+		"http://www.website.gov.uk",
+		"http://www.website.gov.uk/index.html",
+	}
+	for _, url := range good_urls {
+		ans := re.MatchString(url)
+		if ans != true {
+			t.Errorf("RegEx failed want %s got %s", "true", "false")
+		}
+	}
+}
+
+func TestRegExBad(t *testing.T) {
+	good_urls := []string{
+		"emailto:test@gam.com",
+		"ht#tp://www.website.gov.uk",
+		"http://news.sky.com/skynews/article/0,,30200-1303092,00.html",
+		"example.com/file[/].html",
+	}
+	for _, url := range good_urls {
+		ans := re.MatchString(url)
+		if ans != false {
+			t.Errorf("RegEx %s want %s got %s", url, "false", "true")
+		}
+	}
 }
