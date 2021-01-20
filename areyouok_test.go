@@ -24,11 +24,12 @@ func TestRegExGood(t *testing.T) {
 		"http://work.io",
 		"http://www.website.gov.uk",
 		"http://www.website.gov.uk/index.html",
+		"http://website.in/843783787",
 	}
 	for _, url := range good_urls {
 		ans := re.MatchString(url)
 		if ans != true {
-			t.Errorf("RegEx failed want %s got %s", "true", "false")
+			t.Errorf("RegEx %s want %s got %s", url, "true", "false")
 		}
 	}
 }
@@ -39,6 +40,7 @@ func TestRegExBad(t *testing.T) {
 		"ht#tp://www.website.gov.uk",
 		"http://news.sky.com/skynews/article/0,,30200-1303092,00.html",
 		"example.com/file[/].html",
+        "http://domain.com/$dfd",
 	}
 	for _, url := range good_urls {
 		ans := re.MatchString(url)

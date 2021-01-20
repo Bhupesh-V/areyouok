@@ -127,7 +127,7 @@ func getLinks(files []string) ([]map[string]string, map[string][]string) {
 	return allHyperlinks, hyperlinks
 }
 
-func generateReport(data []map[string]string, validfiles map[string][]string, linkfr map[string]map[string]string, reportType string) {
+func generateReport(validfiles map[string][]string, linkfr map[string]map[string]string, reportType string) {
 	currentDir, _ := os.Getwd()
 	//go:embed static/*
 	var reportTemplates embed.FS
@@ -140,7 +140,6 @@ func generateReport(data []map[string]string, validfiles map[string][]string, li
 		}
 		f, _ := os.Create("report.html")
 		templateData := struct {
-			NotOkurls  []map[string]string
 			ValidFiles map[string][]string
 			ReLinks    map[string]map[string]string
 			Date       string
@@ -149,7 +148,6 @@ func generateReport(data []map[string]string, validfiles map[string][]string, li
 			TotalFiles string
 			TotalTime  string
 		}{
-			NotOkurls:  data,
 			ValidFiles: validfiles,
 			ReLinks:    linkfr,
 			Date:       now.Format("January 2, 2006"),
@@ -160,21 +158,20 @@ func generateReport(data []map[string]string, validfiles map[string][]string, li
 		}
 		t.Execute(f, templateData)
 	} else if reportType == "json" {
-		j, err := json.MarshalIndent(data, "", "  ")
+		j, err := json.MarshalIndent(linkfr, "", "  ")
 		if err != nil {
 			fmt.Println(err)
 		}
 		err = ioutil.WriteFile("report."+reportType, j, 0644)
 	} else if reportType == "txt" {
-		t := textTemplate.Must(textTemplate.New("t1").
-			Parse(`{{.TotalLinks}} URLs were analyzed across {{.TotalFiles}} files in {{ println .TotalTime}}{{"\n"}}Following URLs were found not OK:{{"\n\n"}}{{range $_, $v := $.NotOkurls}}{{ if ne $v.message "OK" }}{{ println $v.url }}{{end}}{{end}}`))
+		t := textTemplate.Must(textTemplate.ParseFS(reportTemplates, fmt.Sprintf("static/report_%s.txt", reportType)))
 		templateData := struct {
-			NotOkurls  []map[string]string
+			ReLinks    map[string]map[string]string
 			TotalLinks string
 			TotalFiles string
 			TotalTime  string
 		}{
-			NotOkurls:  data,
+			ReLinks:    linkfr,
 			TotalLinks: strconv.Itoa(totalLinks),
 			TotalFiles: strconv.Itoa(totalFiles),
 			TotalTime:  totalTime,
@@ -251,8 +248,12 @@ func main() {
 	data := driver(links)
 	linkfr := make(map[string]map[string]string)
 	for _, v := range data {
-		urlMap := map[string]string{"code": v["code"], "message": v["message"]}
+        urlMap := map[string]string{
+            "code": v["code"], 
+            "message": v["message"], 
+            "response_time": v["response_time"],
+        }
 		linkfr[v["url"]] = urlMap
 	}
-	generateReport(data, valid, linkfr, reportType)
+	generateReport(valid, linkfr, reportType)
 }

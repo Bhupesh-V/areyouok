@@ -52,11 +52,11 @@
           <th width="70%">URL</th>
           <th>Message</th>
         </tr>
-        {{- range $_, $v := $.NotOkurls}}
-        {{- if ne $v.message "OK"}}
-        <tr class="c{{print .code -}}">
-          <td><a href="{{print $v.url}}">{{print $v.url -}}</a></td>
-          <td align="center">{{print .message -}}</td>
+        {{- range $url, $v := $.ReLinks}}
+        {{- if ne (index $v "message") "OK"}}
+        <tr class="c{{print (index $v "code") -}}">
+          <td><a href="{{print $url}}">{{print $url -}}</a></td>
+          <td align="center">{{print (index $v "message") -}}</td>
         </tr>
         {{- end}}
         {{- end}}
@@ -70,12 +70,12 @@
           <th>Message</th>
           <th>Response Time</th>
         </tr>
-        {{- range $.NotOkurls}}
-        <tr class="c{{print .code}}">
-          <td><a href="{{print .url}}">{{print .url -}}</a></td>
-          <td align="center">{{print .code -}}</td>
-          <td align="center">{{print .message -}}</td>
-          <td align="center">{{print .response_time -}}</td>
+        {{- range $url, $v := $.ReLinks}}
+        <tr class="c{{print (index $v "code")}}">
+          <td><a href="{{print $url}}">{{print $url -}}</a></td>
+          <td align="center">{{print (index $v "code") -}}</td>
+          <td align="center">{{print (index $v "message") -}}</td>
+          <td align="center">{{print (index $v "response_time") -}}</td>
         </tr>
         {{- end}}
       </table>
