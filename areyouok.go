@@ -28,6 +28,7 @@ var (
 	totalFiles int
 	totalLinks int
 	aroVersion string = "dev"
+	aroDate string = "dev"
 )
 
 func checkLink(link string, wg *sync.WaitGroup, ch chan map[string]string) {
@@ -86,14 +87,6 @@ func getFiles(userPath string, filetype string, ignore []string) []string {
 		log.Println(err)
 	}
 	return validFiles
-}
-
-func indent(v interface{}) string {
-	b, err := json.MarshalIndent(v, "", "  ")
-	if err != nil {
-		return fmt.Sprintf("%#v", v)
-	}
-	return string(b)
 }
 
 func getLinks(files []string) ([]map[string]string, map[string][]string) {
@@ -215,7 +208,7 @@ func main() {
 	)
 	flag.StringVar(&typeOfFile, "t", "md", "Specify type of files to scan")
 	flag.StringVar(&ignoreDirs, "i", "", "Comma separated directory and/or file names to ignore")
-	flag.StringVar(&reportType, "r", "html", "Generate report. Supported formats include json, html, txt & github")
+	flag.StringVar(&reportType, "r", "", "Generate report. Supported formats include json, html, txt & github")
 	Version := flag.Bool("v", false, "Prints Current AreYouOk Version")
 
 	flag.Usage = func() {
@@ -227,7 +220,7 @@ func main() {
 	}
 	flag.Parse()
 	if *Version {
-		fmt.Println(aroVersion)
+		fmt.Printf("AreYouOk %s on %s", aroVersion, aroDate)
 		os.Exit(0)
 	}
 	if ignoreDirs != "" {
@@ -248,12 +241,14 @@ func main() {
 	data := driver(links)
 	linkfr := make(map[string]map[string]string)
 	for _, v := range data {
-        urlMap := map[string]string{
-            "code": v["code"], 
-            "message": v["message"], 
-            "response_time": v["response_time"],
-        }
+		urlMap := map[string]string{
+			"code":          v["code"],
+			"message":       v["message"],
+			"response_time": v["response_time"],
+		}
 		linkfr[v["url"]] = urlMap
 	}
-	generateReport(valid, linkfr, reportType)
+	if reportType != "" {
+		generateReport(valid, linkfr, reportType)
+	}
 }

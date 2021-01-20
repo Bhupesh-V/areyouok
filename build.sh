@@ -4,7 +4,7 @@ package_name="areyouok"
 platforms=("windows/amd64" "linux/amd64" "linux/arm64" "linux/386" "darwin/amd64")
 
 # remove any old binaries
-echo -e "Removing previous binaries"
+echo -e "Removing previous builds"
 rm "$package_name"-*
 
 for platform in "${platforms[@]}"
@@ -15,7 +15,7 @@ do
     printf "%s " "Building for $GOOS-$GOARCH"
     if export GOOS="$GOOS" GOARCH="$GOARCH"; then
         output_name="$package_name-$GOOS-$GOARCH$(go env GOEXE)"
-        go build -ldflags="-X 'main.aroVersion=$1'" -o "$output_name"
+        go build -ldflags="-X 'main.aroVersion=$1' -X 'main.aroDate=$(date '+(%d %b %Y)')'" -o "$output_name"
         echo -e "✅"
     else
         echo -e "An error has occurred! Aborting ..."

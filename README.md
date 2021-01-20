@@ -19,11 +19,11 @@
 
 ## Who is `AreYouOk` made for ?
 
-- FOSS Package Maintainers 📦️:<br>
-  With packages comes documentation which needs to be constantly updated & checked for dead/non-functioning URLs. AreYouOk integrates seamlessly with Github Actions (since its a CLI).
-- Tech Bloggers ✍️ :<br>
-  If you are someone who writes countless tutorials & owns the source for your website, Use areyouok to make sure your blogs don't contain any non-functioning URLs
-- Literally anyone who wants to check a bunch of URLs for being dead ☠️  or not
+- **OSS Package Maintainers** 📦️:<br>
+  With packages comes documentation which needs to be constantly updated & checked for dead/non-functioning URLs.
+- **Tech Bloggers** ✍️ :<br>
+  If you are someone who writes countless tutorials & owns the source for your website, Use areyouok to make sure your blogs don't contain any non-functioning URLs.
+- Literally anyone who wants to check a bunch of URLs for being dead ☠️  or not, SEO experts? 
 
 With time _AreYouOk_ can evolve to analyze URLs over a remote resource as well, send your ideas ✨️ through [**Discussions**](https://github.com/Bhupesh-V/areyouok/discussions)
 
@@ -85,7 +85,6 @@ Some example usages:
   areyouok -i=_layouts,.git,_site,README.md,build.py,USAGE.md -r=html ~/Documents/til/
   ```
   Currently supported report formats are: `json`, `txt`, `html` & `github`.
-  Default report type is set to `html`.
 
   Different report types provide different levels of information which is briefly summarized below:
   1. **JSON** (report.json)<br>
@@ -120,6 +119,7 @@ Some example usages:
      74 URLs were analyzed across 31 files in 21.69s
 
      Following URLs are not OK:
+
      http://freecodecamp.org`
      http://127.0.0.1:8000/
      https://drive.google.com/uc?export=view&id=<INSERT-ID>`
@@ -143,7 +143,7 @@ Some example usages:
 
 #### Prerequisites
 
-- Go 1.16
+- [Go 1.16](https://golang.org/dl/#unstable)
 
 1. Clone the repository.
    ```bash
@@ -153,9 +153,9 @@ Some example usages:
    ```bash
    go test -v
    ```
-3. Lint the project with `golint`
+3. Format & Lint the project.
    ```bash
-   golint areyouok/areyouok.go
+   gofmt -w areyouok.go && golint areyouok.go
    ```
 
 ## 📝 Changelog
