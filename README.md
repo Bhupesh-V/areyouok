@@ -172,6 +172,11 @@ Some example usages:
    gofmt -w areyouok.go && golint areyouok.go
    ```
 
+## Projects Using `AreYouOk`
+
+- [til](https://github.com/Bhupesh-V/til)
+- [+ Add Yours](https://github.com/Bhupesh-V/areyouok/fork)
+
 ## 📝 Changelog
 
 See the [CHANGELOG.md](CHANGELOG.md) file for details.
