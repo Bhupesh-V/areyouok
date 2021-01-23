@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -27,8 +28,11 @@ var (
 	totalTime  string
 	totalFiles int
 	totalLinks int
-	aroVersion string = "dev"
-	aroDate string = "dev"
+	//Do not modify, its done at compile time using ldflags
+	aroVersion  string = "dev" //aro Version
+	aroDate     string = "dev" //aro Build Date
+	branch_name string
+	repo_url    string
 )
 
 func checkLink(link string, wg *sync.WaitGroup, ch chan map[string]string) {
@@ -65,6 +69,24 @@ func in(a string, list []string) bool {
 	return false
 }
 
+func getGitDetails(userDir string) {
+	// get default branch name
+	cmd := exec.Command("git", "rev-parse", "--abbrev-ref", "origin/HEAD")
+	cmd.Dir = userDir
+	branch, err := cmd.CombinedOutput()
+    if err == nil {
+        branch_name = strings.Trim(strings.Split(string(branch[:]), "/")[1], "\r\n")
+    }
+	// get repo url
+	config := exec.Command("git", "config", "--get", "remote.origin.url")
+	config.Dir = userDir
+	repo, err := config.CombinedOutput()
+    if err == nil {
+        repo_url = string(repo[:])
+        repo_url = repo_url[0 : len(repo_url)-5]
+    }
+}
+
 func getFiles(userPath string, filetype string, ignore []string) []string {
 	var validFiles []string
 
@@ -89,7 +111,7 @@ func getFiles(userPath string, filetype string, ignore []string) []string {
 	return validFiles
 }
 
-func getLinks(files []string) ([]map[string]string, map[string][]string) {
+func getLinks(files []string, userDir string) ([]map[string]string, map[string][]string) {
 	hyperlinks := make(map[string][]string)
 	var allLinks []string
 	var allHyperlinks []map[string]string
@@ -131,7 +153,7 @@ func generateReport(validfiles map[string][]string, linkfr map[string]map[string
 		if err != nil {
 			fmt.Println(err)
 		}
-		f, _ := os.Create("report.html")
+		f, _ := os.Create(fmt.Sprintf("report.%s", reportType))
 		templateData := struct {
 			ValidFiles map[string][]string
 			ReLinks    map[string]map[string]string
@@ -140,6 +162,8 @@ func generateReport(validfiles map[string][]string, linkfr map[string]map[string
 			TotalLinks string
 			TotalFiles string
 			TotalTime  string
+			BranchName string
+			RepoURL    string
 		}{
 			ValidFiles: validfiles,
 			ReLinks:    linkfr,
@@ -148,6 +172,8 @@ func generateReport(validfiles map[string][]string, linkfr map[string]map[string
 			TotalLinks: strconv.Itoa(totalLinks),
 			TotalFiles: strconv.Itoa(totalFiles),
 			TotalTime:  totalTime,
+			BranchName: branch_name,
+			RepoURL:    repo_url,
 		}
 		t.Execute(f, templateData)
 	} else if reportType == "json" {
@@ -220,7 +246,7 @@ func main() {
 	}
 	flag.Parse()
 	if *Version {
-		fmt.Printf("AreYouOk %s on %s", aroVersion, aroDate)
+		fmt.Printf("AreYouOk %s built on %s", aroVersion, aroDate)
 		os.Exit(0)
 	}
 	if ignoreDirs != "" {
@@ -236,8 +262,9 @@ func main() {
 		fmt.Printf("%s in not a supported report format\n", reportType)
 		os.Exit(1)
 	}
-	var validFiles = getFiles(userDir, typeOfFile, dirs)
-	links, valid := getLinks(validFiles)
+	getGitDetails(userDir)
+	validFiles := getFiles(userDir, typeOfFile, dirs)
+	links, valid := getLinks(validFiles, userDir)
 	data := driver(links)
 	linkfr := make(map[string]map[string]string)
 	for _, v := range data {

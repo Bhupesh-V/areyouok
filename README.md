@@ -90,25 +90,34 @@ Some example usages:
   1. **JSON** (report.json)<br>
      The JSON report can be used for other computational tasks as required (E.g emailing dead urls to yourself)
      ```json
-     [
-        {
-                "message": "Get http://127.0.0.1:8000/: dial tcp 127.0.0.1:8000: connect: connection refused",
-                "url": "http://127.0.0.1:8000/"
+     {
+        "http://127.0.0.1:8000/": {
+                "code": "",
+                "message": "Get \"http://127.0.0.1:8000/\": dial tcp 127.0.0.1:8000: connect: connection refused",
+                "response_time": ""
         },
-        {
+        "http://freecodecamp.org": {
                 "code": "200",
                 "message": "OK",
-                "response_time": "0.77s",
-                "url": "http://prnbs.github.io/projects/regular-expression-parser/"
+                "response_time": "5.44s"
         },
-        {
+        "http://ogp.me/": {
                 "code": "200",
                 "message": "OK",
-                "response_time": "2.59s",
-                "url": "https://swtch.com/~rsc/regexp/regexp1.html"
+                "response_time": "3.60s"
+        },
+        "http://prnbs.github.io/projects/regular-expression-parser/": {
+                "code": "200",
+                "message": "OK",
+                "response_time": "0.25s"
+        },
+        "https://bhupeshv.me/30-Seconds-of-C++/": {
+                "code": "404",
+                "message": "Not Found",
+                "response_time": "3.84s"
         },
         ...
-     ]
+     }
      ```
 
   2. **Text** (report.txt)<br>
@@ -128,6 +137,7 @@ Some example usages:
      https://github.com/codeclassroom/PlagCheck/blob/master/docs/docs.md
      https://bhupeshv.me/30-Seconds-of-C++/
      ```
+     Note that the total time would vary according to your internet speed & website latency.
 
   3. **HTML** (report.html)<br>
      The html report is the most superior formats of all & can be used to have a visual representaion of analyzed links.<br>
