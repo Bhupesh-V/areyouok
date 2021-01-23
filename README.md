@@ -32,23 +32,23 @@ With time _AreYouOk_ can evolve to analyze URLs over a remote resource as well, 
 
 - Linux
   ```bash
-  curl -sO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-linux-amd64
+  curl -LJO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-linux-amd64
   # or
-  wget -sO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-linux-amd64
+  wget -q https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-linux-amd64
   ```
 
 - MacOS
   ```bash
-  curl -sO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-darwin-amd64
+  curl -LJO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-darwin-amd64
   # or
-  wget -sO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-darwin-amd64
+  wget -q https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-darwin-amd64
   ```
 
 - Windows
   ```bash
-  curl -sO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-windows-amd64
+  curl -LJO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-windows-amd64
   # or
-  wget -sO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-windows-amd64
+  wget -q https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-windows-amd64
   ```
 
 Check installation by running `areyouok -v`
@@ -147,7 +147,10 @@ Some example usages:
 
   4. **GitHub** (report.github)<br>
      The github report format is well suited if you are utilizing Github Actions. The format generated is largely HTML, compatible with github's commonmark markdown renderer.<br>
-     <!-- Below is a demo of a Github Action which reports the analyzed URLs through github issues. -->
+     Below is a demo of a Github Action which reports the analyzed URLs through github issues. [Here is a demo link](https://github.com/Bhupesh-V/til/issues/2)
+     
+     ![demo-action](https://user-images.githubusercontent.com/34342551/105579706-169cce80-5dae-11eb-8dd6-b51bf23e63ee.png)
+     
 
 
 ## Development
