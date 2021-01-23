@@ -15,6 +15,7 @@
   <a href="https://twitter.com/bhupeshimself">
     <img alt="Twitter: bhupeshimself" src="https://img.shields.io/twitter/follow/bhupeshimself.svg?style=social" target="_blank" />
   </a>
+  <img alt="areyouok-v1.0.0-demo" title="areyouok-v1.0.0-demo" src="https://user-images.githubusercontent.com/34342551/105573121-5a2d1380-5d81-11eb-8ae9-baf6d3d50e3a.gif">
 </p>
 
 ## Who is `AreYouOk` made for ?
