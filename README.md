@@ -9,8 +9,8 @@
   <a href="https://github.com/Bhupesh-V/areyouok/blob/master/LICENSE">
     <img alt="License" src="https://img.shields.io/github/license/Bhupesh-V/areyouok?color=blue" target="_blank">
   </a>
-  <a href="https://github.com/Bhupesh-V/areyouok/issues">
-    <img alt="Issues" src="https://img.shields.io/github/issues/Bhupesh-V/areyouok?color=blueviolet" />
+  <a href="">
+    <img alt="CodeQL Analysis" src="https://github.com/Bhupesh-V/areyouok/workflows/CodeQL%20Analysis/badge.svg?branch=master" />
   </a>
   <a href="https://twitter.com/bhupeshimself">
     <img alt="Twitter: bhupeshimself" src="https://img.shields.io/twitter/follow/bhupeshimself.svg?style=social" target="_blank" />
