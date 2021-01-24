@@ -29,10 +29,10 @@ var (
 	totalFiles int
 	totalLinks int
 	//Do not modify, its done at compile time using ldflags
-	aroVersion  string = "dev" //aro Version
-	aroDate     string = "dev" //aro Build Date
-	branch_name string
-	repo_url    string
+	aroVersion string = "dev" //aro Version
+	aroDate    string = "dev" //aro Build Date
+	branchName string
+	repoURL    string
 )
 
 func checkLink(link string, wg *sync.WaitGroup, ch chan map[string]string) {
@@ -74,17 +74,17 @@ func getGitDetails(userDir string) {
 	cmd := exec.Command("git", "rev-parse", "--abbrev-ref", "origin/HEAD")
 	cmd.Dir = userDir
 	branch, err := cmd.CombinedOutput()
-    if err == nil {
-        branch_name = strings.Trim(strings.Split(string(branch[:]), "/")[1], "\r\n")
-    }
+	if err == nil {
+		branchName = strings.Trim(strings.Split(string(branch[:]), "/")[1], "\r\n")
+	}
 	// get repo url
 	config := exec.Command("git", "config", "--get", "remote.origin.url")
 	config.Dir = userDir
 	repo, err := config.CombinedOutput()
-    if err == nil {
-        repo_url = string(repo[:])
-        repo_url = repo_url[0 : len(repo_url)-5]
-    }
+	if err == nil {
+		repoURL = string(repo[:])
+		repoURL = repoURL[0 : len(repoURL)-5]
+	}
 }
 
 func getFiles(userPath string, filetype string, ignore []string) []string {
@@ -172,8 +172,8 @@ func generateReport(validfiles map[string][]string, linkfr map[string]map[string
 			TotalLinks: strconv.Itoa(totalLinks),
 			TotalFiles: strconv.Itoa(totalFiles),
 			TotalTime:  totalTime,
-			BranchName: branch_name,
-			RepoURL:    repo_url,
+			BranchName: branchName,
+			RepoURL:    repoURL,
 		}
 		t.Execute(f, templateData)
 	} else if reportType == "json" {
