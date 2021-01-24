@@ -136,8 +136,11 @@ func getLinks(files []string, userDir string) ([]map[string]string, map[string][
 	// yay! Jackpot!!
 	totalFiles = len(hyperlinks)
 	totalLinks = len(allLinks)
-	fmt.Printf("%d links found across %d files\n\n", len(allLinks), len(hyperlinks))
-	// fmt.Println(indent(hyperlinks))
+	fmt.Printf("Found %d link(s) across %d file(s)\n\n", totalLinks, totalFiles)
+	for file := range hyperlinks {
+		fmt.Println(file)
+	}
+	fmt.Println()
 
 	return allHyperlinks, hyperlinks
 }
@@ -232,17 +235,17 @@ func main() {
 		reportType string
 		dirs       []string
 	)
-	flag.StringVar(&typeOfFile, "t", "md", "Specify type of files to scan")
-	flag.StringVar(&ignoreDirs, "i", "", "Comma separated directory and/or file names to ignore")
-	flag.StringVar(&reportType, "r", "", "Generate report. Supported formats include json, html, txt & github")
-	Version := flag.Bool("v", false, "Prints Current AreYouOk Version")
+	flag.StringVar(&typeOfFile, "t", "md", "Specify `type` of files to scan")
+	flag.StringVar(&ignoreDirs, "i", "", "Comma separated directory and/or file names to `ignore`")
+	flag.StringVar(&reportType, "r", "", "Generate `report`. Supported formats include json, html, txt & github")
+	Version := flag.Bool("v", false, "Prints current AreYouOk `version`")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stdout, "AreYouOK URL Health Checker\n")
 		fmt.Fprintf(os.Stdout, "Usage: areyouok [OPTIONS] <directory-path>\nFollowing options are available:\n")
 		flag.PrintDefaults()
-		fmt.Fprintf(os.Stdout, "\nExample: areyouok -i=.git,README.md -r=html Documents/some-dir/\n\n")
-		fmt.Fprintf(os.Stdout, "Report Any Bugs to varshneybhupesh@gmail.com\n")
+		fmt.Fprintf(os.Stdout, "\nExample: areyouok -t=html -i=.git,README.md -r=json Documents/some-dir/\n\n")
+		fmt.Fprintf(os.Stdout, "Report Any Bugs via \nEmail  : varshneybhupesh@gmail.com\nGitHub : https://github.com/Bhupesh-V/areyouok/issues/new/choose\n")
 	}
 	flag.Parse()
 	if *Version {
@@ -258,7 +261,7 @@ func main() {
 	} else {
 		userDir = flag.Args()[0]
 	}
-	if !in(reportType, []string{"github", "json", "txt", "html"}) {
+	if !in(reportType, []string{"github", "json", "txt", "html", ""}) {
 		fmt.Printf("%s in not a supported report format\n", reportType)
 		os.Exit(1)
 	}
