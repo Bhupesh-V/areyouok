@@ -71,18 +71,14 @@ func in(a string, list []string) bool {
 
 func getGitDetails(userDir string) {
 	// get default branch name
-	cmd := exec.Command("git", "rev-parse", "--abbrev-ref", "origin/HEAD")
-	cmd.Dir = userDir
-	branch, err := cmd.CombinedOutput()
+	cmd, err := exec.Command("git", "-C", userDir, "symbolic-ref", "--short", "HEAD").CombinedOutput()
 	if err == nil {
-		branchName = strings.Trim(strings.Split(string(branch[:]), "/")[1], "\r\n")
+		branchName = strings.Trim(string(cmd[:]), "\r\n")
 	}
 	// get repo url
-	config := exec.Command("git", "config", "--get", "remote.origin.url")
-	config.Dir = userDir
-	repo, err := config.CombinedOutput()
+	config, err := exec.Command("git", "-C", userDir, "config", "--get", "remote.origin.url").CombinedOutput()
 	if err == nil {
-		repoURL = string(repo[:])
+		repoURL = string(config[:])
 		repoURL = repoURL[0 : len(repoURL)-5]
 	}
 }

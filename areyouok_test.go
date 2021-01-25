@@ -38,14 +38,24 @@ func TestRegExBad(t *testing.T) {
 	badUrls := []string{
 		"emailto:test@gam.com",
 		"ht#tp://www.website.gov.uk",
-		"http://news.sky.com/skynews/article/0,,30200-1303092,00.html",
 		"example.com/file[/].html",
-		"http://domain.com/$dfd",
 	}
 	for _, url := range badUrls {
 		ans := re.MatchString(url)
 		if ans != false {
 			t.Errorf("RegEx %s want %s got %s", url, "false", "true")
 		}
+	}
+}
+
+func TestGit(t *testing.T) {
+	getGitDetails(".")
+	correctRemote := "https://github.com/Bhupesh-V/areyouok"
+	correctBranch := "master"
+	if branchName != correctBranch {
+		t.Errorf("GitDetails want %s got %s", correctBranch, branchName)
+	}
+	if repoURL != correctRemote {
+		t.Errorf("GitDetails want %s got %s", correctRemote, repoURL)
 	}
 }
