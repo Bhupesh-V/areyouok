@@ -39,15 +39,10 @@ func checkLink(link string, wg *sync.WaitGroup, ch chan map[string]string) {
 	defer wg.Done()
 	goStart := time.Now()
 	reqURL, _ := url.Parse(link)
-	req := &http.Request{
-		Method: "GET",
-		URL:    reqURL,
-		Header: map[string][]string{
-			"User-Agent": {"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36"},
-		},
-	}
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	req.Header.Add("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36")
 	resp, err := http.DefaultClient.Do(req)
-	responseTime := fmt.Sprintf("%.2fs", time.Since(goStart).Seconds())
+	responseTime := fmt.Sprintf("%.2fs", time.Now().Sub(goStart).Seconds())
 	if err != nil {
 		ch <- map[string]string{"url": link, "message": err.Error()}
 		return
@@ -152,7 +147,10 @@ func generateReport(validfiles map[string][]string, linkfr map[string]map[string
 		if err != nil {
 			fmt.Println(err)
 		}
-		f, _ := os.Create(fmt.Sprintf("report.%s", reportType))
+		f, err := os.Create(fmt.Sprintf("report.%s", reportType))
+		if err != nil {
+			fmt.Errorf("open report.%s failed: %w", reportType, err)
+		}
 		templateData := struct {
 			ValidFiles map[string][]string
 			ReLinks    map[string]map[string]string

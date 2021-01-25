@@ -46,9 +46,9 @@ With time _AreYouOk_ can evolve to analyze URLs over a remote resource as well, 
 
 - Windows
   ```bash
-  curl -LJO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-windows-amd64
+  curl -LJO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-windows-amd64.exe
   # or
-  wget -q https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-windows-amd64
+  wget -q https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-windows-amd64.exe
   ```
 
 Check installation by running `areyouok -v`
