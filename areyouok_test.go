@@ -153,18 +153,18 @@ func Test_getLinks(t *testing.T) {
 		}
 	})
 	t.Run("check list of JSON", func(t *testing.T) {
-		valid_links := map[string][]string{
+		valid := map[string][]string{
 			"CODE_OF_CONDUCT.md": {
 				"https://www.contributor-covenant.org/version/1/4/code-of-conduct.html",
 				"https://www.contributor-covenant.org",
 				"https://www.contributor-covenant.org/faq",
 			},
 		}
-        j2, _ := json.MarshalIndent(a2, "", "  ")
-		v, _ := json.MarshalIndent(valid_links, "", "  ")
+		j2, _ := json.MarshalIndent(a2, "", "  ")
+		v, _ := json.MarshalIndent(valid, "", "  ")
 		result, err := AreEqualJSON(string(v), string(j2))
 		if !result || err != nil {
-			t.Errorf("getLinks() want %s got %s", valid_links, a2)
+			t.Errorf("getLinks() want %s got %s", valid, a2)
 		}
 	})
 }
