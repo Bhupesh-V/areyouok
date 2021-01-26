@@ -102,7 +102,7 @@ func getFiles(userPath string, filetype string, ignore []string) []string {
 	return validFiles
 }
 
-func getLinks(files []string, userDir string) ([]map[string]string, map[string][]string) {
+func getLinks(files []string) ([]map[string]string, map[string][]string) {
 	hyperlinks := make(map[string][]string)
 	var allLinks []string
 	var allHyperlinks []map[string]string
@@ -261,7 +261,7 @@ func main() {
 	}
 	getGitDetails(userDir)
 	validFiles := getFiles(userDir, typeOfFile, dirs)
-	links, valid := getLinks(validFiles, userDir)
+	links, valid := getLinks(validFiles)
 	data := driver(links)
 	linkfr := make(map[string]map[string]string)
 	for _, v := range data {
