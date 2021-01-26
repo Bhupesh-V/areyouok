@@ -3,7 +3,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.1.0] - Jan , 2021
+## [1.1.0] - Jan 26, 2021
 
 ### Fixed
 
