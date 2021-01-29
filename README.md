@@ -1,7 +1,5 @@
 <h1 align="center">AreYouOK?</h1>
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+
 <blockquote align="center">A minimal, fast & easy to use URL health checker</blockquote>
 <p align="center">
   <img align="center" alt="cat areyouok logo" height="100px" src="https://user-images.githubusercontent.com/34342551/103980534-0da0e000-51a6-11eb-8e67-f4c41599ce1e.png" />
