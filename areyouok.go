@@ -73,8 +73,8 @@ func getGitDetails(userDir string) {
 	// get repo url
 	config, err := exec.Command("git", "-C", userDir, "config", "--get", "remote.origin.url").CombinedOutput()
 	if err == nil {
-		repoURL = string(config[:])
-		repoURL = repoURL[0 : len(repoURL)-5]
+		repoURL = strings.Trim(string(config[:]), "\r\n")
+		repoURL = strings.TrimSuffix(repoURL, ".git")
 	}
 }
 
