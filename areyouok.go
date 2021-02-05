@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -64,28 +65,32 @@ func in(a string, list []string) bool {
 	return false
 }
 
-func getGitDetails(userDir string) {
+func checkErr(err error) {
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func getGitDetails(userDir *string) {
 	// get default branch name
-	cmd, err := exec.Command("git", "-C", userDir, "symbolic-ref", "--short", "HEAD").CombinedOutput()
+	cmd, err := exec.Command("git", "-C", *userDir, "symbolic-ref", "--short", "HEAD").CombinedOutput()
 	if err == nil {
 		branchName = strings.Trim(string(cmd[:]), "\r\n")
 	}
 	// get repo url
-	config, err := exec.Command("git", "-C", userDir, "config", "--get", "remote.origin.url").CombinedOutput()
+	config, err := exec.Command("git", "-C", *userDir, "config", "--get", "remote.origin.url").CombinedOutput()
 	if err == nil {
 		repoURL = strings.Trim(string(config[:]), "\r\n")
 		repoURL = strings.TrimSuffix(repoURL, ".git")
 	}
 }
 
-func getFiles(userPath string, filetype string, ignore []string) []string {
+func getFiles(userPath *string, filetype string, ignore []string) []string {
 	var validFiles []string
 
-	err := filepath.Walk(userPath,
+	err := filepath.Walk(*userPath,
 		func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
+			checkErr(err)
 			if info.IsDir() {
 				if in(info.Name(), ignore) {
 					return filepath.SkipDir
@@ -96,22 +101,18 @@ func getFiles(userPath string, filetype string, ignore []string) []string {
 			}
 			return nil
 		})
-	if err != nil {
-		log.Println(err)
-	}
+	checkErr(err)
 	return validFiles
 }
 
-func getLinks(files []string) ([]map[string]string, map[string][]string) {
+func getLinks(files []string, userDir string) ([]map[string]string, map[string][]string) {
 	hyperlinks := make(map[string][]string)
 	var allLinks []string
 	var allHyperlinks []map[string]string
 
 	for _, file := range files {
 		data, err := ioutil.ReadFile(file)
-		if err != nil {
-			fmt.Println("File reading error", err)
-		}
+		checkErr(err)
 		fileContent := string(data)
 		submatchall := re.FindAllString(fileContent, -1)
 		if len(submatchall) > 0 {
@@ -127,11 +128,6 @@ func getLinks(files []string) ([]map[string]string, map[string][]string) {
 	// yay! Jackpot!!
 	totalFiles = len(hyperlinks)
 	totalLinks = len(allLinks)
-	fmt.Printf("Found %d link(s) across %d file(s)\n\n", totalLinks, totalFiles)
-	for file := range hyperlinks {
-		fmt.Println(file)
-	}
-	fmt.Println()
 
 	return allHyperlinks, hyperlinks
 }
@@ -144,13 +140,9 @@ func generateReport(validfiles map[string][]string, linkfr map[string]map[string
 	if reportType == "html" || reportType == "github" {
 		now := time.Now()
 		t, err := template.ParseFS(reportTemplates, fmt.Sprintf("static/report_%s.html", reportType))
-		if err != nil {
-			fmt.Println(err)
-		}
+		checkErr(err)
 		f, err := os.Create(fmt.Sprintf("report.%s", reportType))
-		if err != nil {
-			fmt.Errorf("open report.%s failed: %w", reportType, err)
-		}
+		checkErr(err)
 		templateData := struct {
 			ValidFiles map[string][]string
 			ReLinks    map[string]map[string]string
@@ -175,9 +167,7 @@ func generateReport(validfiles map[string][]string, linkfr map[string]map[string
 		t.Execute(f, templateData)
 	} else if reportType == "json" {
 		j, err := json.MarshalIndent(linkfr, "", "  ")
-		if err != nil {
-			fmt.Println(err)
-		}
+		checkErr(err)
 		err = ioutil.WriteFile("report."+reportType, j, 0644)
 	} else if reportType == "txt" {
 		t := textTemplate.Must(textTemplate.ParseFS(reportTemplates, fmt.Sprintf("static/report_%s.txt", reportType)))
@@ -215,10 +205,21 @@ func driver(links []map[string]string) []map[string]string {
 		notoklinks = append(notoklinks, <-ch)
 		fmt.Printf("\rAnalyzing %d/%d URLs", i+1, len(links))
 	}
-	// fmt.Println(indent(notoklinks))
 	totalTime = fmt.Sprintf("%.2fs", time.Since(start).Seconds())
 	fmt.Printf("\nTotal Time: %.2fs\n", time.Since(start).Seconds())
+
 	return notoklinks
+}
+
+func displayInfo(valid *map[string][]string, userDir string) {
+	fmt.Printf("Found %s link(s) across %s file(s)\n\n", strconv.Itoa(totalLinks), strconv.Itoa(totalFiles))
+	user, err := user.Current()
+	checkErr(err)
+	homeDir := user.HomeDir
+	for file, urls := range *valid {
+		fmt.Printf("%d 🔗️ %s\r\n", len(urls), strings.Trim(file, homeDir+userDir))
+	}
+	fmt.Println()
 }
 
 func main() {
@@ -259,9 +260,10 @@ func main() {
 		fmt.Printf("%s in not a supported report format\n", reportType)
 		os.Exit(1)
 	}
-	getGitDetails(userDir)
-	validFiles := getFiles(userDir, typeOfFile, dirs)
-	links, valid := getLinks(validFiles)
+	getGitDetails(&userDir)
+	validFiles := getFiles(&userDir, typeOfFile, dirs)
+	links, valid := getLinks(validFiles, userDir)
+	displayInfo(&valid, userDir)
 	data := driver(links)
 	linkfr := make(map[string]map[string]string)
 	for _, v := range data {

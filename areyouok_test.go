@@ -84,7 +84,8 @@ func AreEqualJSON(s1, s2 string) (bool, error) {
 }
 
 func Test_getGitDetails(t *testing.T) {
-	getGitDetails(".")
+	userPath := "."
+	getGitDetails(&userPath)
 	correctRemote := "https://github.com/Bhupesh-V/areyouok"
 	correctBranch := "master"
 	if branchName != correctBranch {
@@ -97,6 +98,7 @@ func Test_getGitDetails(t *testing.T) {
 
 func Test_getValidFiles(t *testing.T) {
 
+	userPath := "."
 	t.Run("With no ignore", func(t *testing.T) {
 		valid := []string{
 			".github/ISSUE_TEMPLATE/----bug-report.md",
@@ -109,7 +111,7 @@ func Test_getValidFiles(t *testing.T) {
 			"CONTRIBUTING.md",
 			"README.md",
 		}
-		ans := getFiles(".", "md", []string{""})
+		ans := getFiles(&userPath, "md", []string{""})
 		if !Equal(valid, ans) {
 			t.Errorf("getValidFiles() want %s got %s", valid, ans)
 		}
@@ -120,7 +122,7 @@ func Test_getValidFiles(t *testing.T) {
 			"CONTRIBUTING.md",
 			"README.md",
 		}
-		ans := getFiles(".", "md", []string{".github", "CHANGELOG.md"})
+		ans := getFiles(&userPath, "md", []string{".github", "CHANGELOG.md"})
 		if !Equal(valid, ans) {
 			t.Errorf("getValidFiles() want %s got %s", valid, ans)
 		}
@@ -128,7 +130,7 @@ func Test_getValidFiles(t *testing.T) {
 }
 
 func Test_getLinks(t *testing.T) {
-	a1, a2 := getLinks([]string{"CODE_OF_CONDUCT.md"})
+	a1, a2 := getLinks([]string{"CODE_OF_CONDUCT.md"}, ".")
 
 	t.Run("check file path based JSON", func(t *testing.T) {
 		valid := []map[string]string{
