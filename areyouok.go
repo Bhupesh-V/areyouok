@@ -12,7 +12,6 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
-	"os/user"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -212,12 +211,10 @@ func driver(links []map[string]string) []map[string]string {
 }
 
 func displayInfo(valid *map[string][]string, userDir string) {
-	fmt.Printf("Found %s link(s) across %s file(s)\n\n", strconv.Itoa(totalLinks), strconv.Itoa(totalFiles))
-	user, err := user.Current()
-	checkErr(err)
-	homeDir := user.HomeDir
+	fmt.Printf("Found %s URL(s) across %s file(s)\n\n", strconv.Itoa(totalLinks), strconv.Itoa(totalFiles))
 	for file, urls := range *valid {
-		fmt.Printf("%d 🔗️ %s\r\n", len(urls), strings.Trim(file, homeDir+userDir))
+		rel, _ := filepath.Rel(userDir, file)
+		fmt.Printf("%d 🔗️ %s\r\n", len(urls), rel)
 	}
 	fmt.Println()
 }
