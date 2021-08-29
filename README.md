@@ -34,22 +34,16 @@ With time _AreYouOk_ can evolve to analyze URLs over a remote resource as well, 
 - Linux
   ```bash
   curl -LJO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-linux-amd64
-  # or
-  wget -q https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-linux-amd64
   ```
 
 - MacOS
   ```bash
   curl -LJO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-darwin-amd64
-  # or
-  wget -q https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-darwin-amd64
   ```
 
 - Windows
   ```bash
   curl -LJO https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-windows-amd64.exe
-  # or
-  wget -q https://github.com/Bhupesh-V/areyouok/releases/latest/download/areyouok-windows-amd64.exe
   ```
 
 Check installation by running `areyouok -v`
