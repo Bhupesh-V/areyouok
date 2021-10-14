@@ -10,6 +10,7 @@
   <a href="https://github.com/Bhupesh-V/areyouok/blob/master/LICENSE">
     <img alt="License" src="https://img.shields.io/github/license/Bhupesh-V/areyouok?color=blue" target="_blank">
   </a>
+  <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/bhupesh-v/areyouok/total?color=purple">
   <a href="">
     <img alt="CodeQL Analysis" src="https://github.com/Bhupesh-V/areyouok/workflows/CodeQL%20Analysis/badge.svg?branch=master" />
   </a>
