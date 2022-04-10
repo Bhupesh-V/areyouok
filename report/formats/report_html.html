@@ -57,7 +57,7 @@
           <th width="70%">URL</th>
           <th>Message</th>
         </tr>
-        {{- range $url, $v := $.ReLinks}}
+        {{- range $url, $v := $.CompleteHealthData}}
         {{- if ne (index $v "message") "OK"}}
         <tr class="c{{print (index $v "code") -}}">
           <td><a href="{{print $url}}">{{print $url -}}</a></td>
@@ -75,7 +75,7 @@
           <th>Message</th>
           <th>Response Time</th>
         </tr>
-        {{- range $url, $v := $.ReLinks}}
+        {{- range $url, $v := $.CompleteHealthData}}
         <tr class="c{{print (index $v "code")}}">
           <td><a href="{{print $url}}">{{print $url -}}</a></td>
           <td align="center">{{print (index $v "code") -}}</td>
@@ -98,10 +98,10 @@
                 <th>Message</th>
               </tr>
               {{- range $url := $v}}
-              <tr class="c{{index (index $.ReLinks $url) "code" -}}">
+              <tr class="c{{index (index $.CompleteHealthData $url) "code" -}}">
                 <td><a href="{{$url}}">{{$url}}</a></td> 
-                <td align="center">{{index (index $.ReLinks $url) "code"}}</td> 
-                <td align="center">{{index (index $.ReLinks $url) "message"}}</td>
+                <td align="center">{{index (index $.CompleteHealthData $url) "code"}}</td> 
+                <td align="center">{{index (index $.CompleteHealthData $url) "message"}}</td>
               </tr>
               {{- end}}
             </table>
