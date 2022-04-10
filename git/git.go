@@ -6,11 +6,6 @@ import (
 	"strings"
 )
 
-// type GitDetails interface {
-// 	getGitBranch() (string, error)
-// 	getGitRemoteURL() (string, error)
-// }
-
 func GetGitBranch(userDir *string) (string, error) {
 	var branchName string
 	cmd, err := exec.Command("git", "-C", *userDir, "symbolic-ref", "--short", "HEAD").CombinedOutput()

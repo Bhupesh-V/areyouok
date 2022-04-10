@@ -101,13 +101,14 @@ func main() {
 		}
 		healthData[v["url"]] = urlMap
 	}
+
 	if reportType != "" {
 		rData := report.Report{
 			ReportType: &reportType,
 			ReportData: &report.ReportData{
 				TotalTime:          &totalTime,
-				TotalLinks:         &links.TotalLinks,
-				TotalFiles:         &links.TotalValidFiles,
+				TotalLinks:         links.TotalLinks,
+				TotalFiles:         links.TotalValidFiles,
 				ValidFiles:         links.FileToListOfLinks,
 				NotOkLinks:         data,
 				CompleteHealthData: healthData,

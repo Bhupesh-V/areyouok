@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>areyouok: Are your URLs ok?</title>
+    <title>areyouok: are your links ok?</title>
     <style>
         summary {
           font-size: x-large;
@@ -47,10 +47,14 @@
     <meta name="author" content="areyouok" />
   </head>
   <body>
-    <h1>AreYouOk URL Health Report ⛑️ </h1>
+    <h1>AreYouOk Links Health Report ⛑️ </h1>
     <p class="description">
-    {{.TotalLinks}} URLs were analyzed across {{.TotalFiles}} file(s) in {{.TotalTime}}
+    <b>{{.TotalLinks}} URL(s) were analyzed across {{.TotalFiles}} file(s) in {{.TotalTime}}</b>
     </p>
+    <!-- {{ $length := len $.CompleteHealthData }} {{ if eq $length 0 }}
+    Sorry. No matching results found
+    {{ end }}
+    {{ $length }} -->
     <details open><summary>Not OK URLs</summary>
       <table>
         <tr>
@@ -110,7 +114,7 @@
         </ol>
       </details>
     </div>
-    <i><p>Report Generated at {{.Time}} on {{.Date}}</p></i>
+    <i><p>Report Generated at {{.ReportMetaData.Time}} on {{.ReportMetaData.Date}}</p></i>
     <i><p><a href="https://github.com/Bhupesh-V/areyouok/issues/new/choose"><b>🐞 Report Bug </b></a> | <a href="https://bhupesh-v.github.io/about/#-support"><b>💰 Support</b></a> | <a href="https://github.com/Bhupesh-V/areyouok"><b>⭐ Give us a Star</b></a></p></i>
   </body>
 </html>

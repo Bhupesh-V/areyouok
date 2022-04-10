@@ -37,8 +37,8 @@ func GetLinks(files []string) *Links {
 	}
 	//TODO: figure this out
 	for filepath, links := range hyperlinks {
-		totalLinks = totalLinks + 1
 		for _, link := range links {
+			totalLinks = totalLinks + 1
 			allHyperlinks = append(allHyperlinks, map[string]string{"file": filepath, "url": link})
 		}
 	}

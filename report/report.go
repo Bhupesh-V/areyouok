@@ -25,9 +25,9 @@ type ReportMetaData struct {
 
 type ReportData struct {
 	// count of links who were checked
-	TotalLinks *int
+	TotalLinks int
 	// count of files where all valid links were found
-	TotalFiles *int
+	TotalFiles int
 	// total time it took to query all the links
 	TotalTime *string
 	// Current Git branch name
@@ -38,12 +38,12 @@ type ReportData struct {
 	// Links which have some problem, which didn't return status 200
 	NotOkLinks         interface{}
 	CompleteHealthData interface{}
+	ReportMetaData     ReportMetaData
 }
 
 type Report struct {
-	ReportType     *string
-	ReportMetaData *ReportMetaData
-	ReportData     *ReportData
+	ReportType *string
+	ReportData *ReportData
 }
 
 func (r *Report) GenerateReport() {
@@ -62,8 +62,8 @@ func (r *Report) GenerateReport() {
 		reportFile, err := os.Create(fmt.Sprintf("report.%s", *r.ReportType))
 		utils.CheckErr(err)
 
-		r.ReportMetaData.Date = now.Format("January 2, 2006")
-		r.ReportMetaData.Time = now.Format(time.Kitchen)
+		r.ReportData.ReportMetaData.Date = now.Format("January 2, 2006")
+		r.ReportData.ReportMetaData.Time = now.Format(time.Kitchen)
 
 		branch, err := git.GetGitBranch(&userDir)
 		if err != nil {
