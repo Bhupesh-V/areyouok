@@ -1,7 +1,8 @@
-{{.TotalLinks}} URLs were analyzed across {{.TotalFiles}} files in {{ println .TotalTime}}{{"\n"}}
+{{.TotalLinks}} URLs were analyzed across {{.TotalFiles}} files in {{.TotalTime}}{{"\n"}}
 Following URLs were found not OK:{{"\n\n"}}
-{{- range $url, $v := $.ReLinks}}
-    {{- if ne (index $v "message") "OK" }}
-        {{- print $url "\n" }}
-    {{- end}}
+
+{{- range $url, $v := $.CompleteHealthData}}
+{{- if ne (index $v "message") "OK"}}
+    {{print $url -}}
+{{- end}}
 {{- end}}

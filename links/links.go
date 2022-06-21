@@ -17,10 +17,14 @@ type Links struct {
 	AllHyperlinks     []map[string]string
 }
 
+func GetURLRegex() *regexp.Regexp {
+	return regexp.MustCompile(`(http|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?`)
+}
+
 // Get all valid links
 func GetLinks(files []string) *Links {
 	var totalLinks int
-	var linkRegex = regexp.MustCompile(`(http|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?`)
+	var linkRegex = GetURLRegex()
 	// Map of file to list of links
 	hyperlinks := make(map[string][]string)
 	// List of JSON {file, url}

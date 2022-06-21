@@ -5,18 +5,21 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+
+	"github.com/Bhupesh-V/areyouok/git"
+	"github.com/Bhupesh-V/areyouok/links"
+	"github.com/Bhupesh-V/areyouok/utils"
 )
 
-func Test_in(t *testing.T) {
+func Test_In(t *testing.T) {
 	t.Run("in", func(t *testing.T) {
-		ans := in("test", []string{"test", "sample"})
+		ans := utils.In("test", []string{"test", "sample"})
 		if ans != true {
 			t.Errorf("In() want %s, want %s", "false", "true")
 		}
 	})
 	t.Run("not in", func(t *testing.T) {
-		//...
-		ans := in("nice", []string{"test", "sample"})
+		ans := utils.In("nice", []string{"test", "sample"})
 		if ans != false {
 			t.Errorf("In() want %s, want %s", "true", "false")
 		}
@@ -32,7 +35,7 @@ func TestRegExGood(t *testing.T) {
 		"http://website.in/843783787",
 	}
 	for _, url := range goodUrls {
-		ans := re.MatchString(url)
+		ans := links.GetURLRegex().MatchString(url)
 		if ans != true {
 			t.Errorf("RegEx %s want %s got %s", url, "true", "false")
 		}
@@ -46,7 +49,7 @@ func TestRegExBad(t *testing.T) {
 		"example.com/file[/].html",
 	}
 	for _, url := range badUrls {
-		ans := re.MatchString(url)
+		ans := links.GetURLRegex().MatchString(url)
 		if ans != false {
 			t.Errorf("RegEx %s want %s got %s", url, "false", "true")
 		}
@@ -85,20 +88,23 @@ func AreEqualJSON(s1, s2 string) (bool, error) {
 
 func Test_getGitDetails(t *testing.T) {
 	userPath := "."
-	getGitDetails(&userPath)
+
 	correctRemote := "https://github.com/Bhupesh-V/areyouok"
 	correctBranch := "master"
-	if branchName != correctBranch {
-		t.Errorf("GitDetails want %s got %s", correctBranch, branchName)
+
+	ansBranch, _ := git.GetGitBranch(&userPath)
+	ansRemote, _ := git.GetGitRemoteURL(&userPath)
+
+	if correctBranch != ansBranch {
+		t.Errorf("GitDetails want %s got %s", correctBranch, ansBranch)
 	}
-	if repoURL != correctRemote {
-		t.Errorf("GitDetails want %s got %s", correctRemote, repoURL)
+	if correctRemote != ansRemote {
+		t.Errorf("GitDetails want %s got %s", correctRemote, ansRemote)
 	}
 }
 
 func Test_getValidFiles(t *testing.T) {
 
-	userPath := "."
 	t.Run("With no ignore", func(t *testing.T) {
 		valid := []string{
 			".github/ISSUE_TEMPLATE/----bug-report.md",
@@ -111,9 +117,9 @@ func Test_getValidFiles(t *testing.T) {
 			"CONTRIBUTING.md",
 			"README.md",
 		}
-		ans := getFiles(&userPath, "md", []string{""})
+		ans := links.GetFiles("md", []string{""})
 		if !Equal(valid, ans) {
-			t.Errorf("getValidFiles() want %s got %s", valid, ans)
+			t.Errorf("GetValidFiles() want %s got %s", valid, ans)
 		}
 	})
 	t.Run("With multiple ignore", func(t *testing.T) {
@@ -122,15 +128,17 @@ func Test_getValidFiles(t *testing.T) {
 			"CONTRIBUTING.md",
 			"README.md",
 		}
-		ans := getFiles(&userPath, "md", []string{".github", "CHANGELOG.md"})
+		ans := links.GetFiles("md", []string{".github", "CHANGELOG.md"})
 		if !Equal(valid, ans) {
-			t.Errorf("getValidFiles() want %s got %s", valid, ans)
+			t.Errorf("GetValidFiles() want %s got %s", valid, ans)
 		}
 	})
 }
 
 func Test_getLinks(t *testing.T) {
-	a1, a2 := getLinks([]string{"CODE_OF_CONDUCT.md"}, ".")
+	links := links.GetLinks([]string{"CODE_OF_CONDUCT.md"})
+	a1 := links.AllHyperlinks
+	a2 := links.FileToListOfLinks
 
 	t.Run("check file path based JSON", func(t *testing.T) {
 		valid := []map[string]string{

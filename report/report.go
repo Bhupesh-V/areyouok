@@ -87,8 +87,10 @@ func (r *Report) GenerateReport() {
 			os.Exit(1)
 		}
 	} else if *r.ReportType == "txt" {
+		fmt.Println(*r.ReportData.TotalTime)
 		textReport := textTemplate.Must(textTemplate.ParseFS(reportTemplates, fmt.Sprintf("formats/report_%s.txt", *r.ReportType)))
-		f, _ := os.Create("report.txt")
+		f, err := os.Create("report.txt")
+		utils.CheckErr(err)
 		textReport.Execute(f, r.ReportData)
 	}
 	fmt.Printf("\nReport Generated: %s.%s", filepath.Join(currentDir, "report"), *r.ReportType)

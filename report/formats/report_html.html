@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>areyouok: are your links ok?</title>
+    <title>AreYouOk: Are your links ok?</title>
     <style>
         summary {
           font-size: x-large;
@@ -51,10 +51,10 @@
     <p class="description">
     <b>{{.TotalLinks}} URL(s) were analyzed across {{.TotalFiles}} file(s) in {{.TotalTime}}</b>
     </p>
-    <!-- {{ $length := len $.CompleteHealthData }} {{ if eq $length 0 }}
+    {{ $length := len $.NotOkLinks }} {{ if eq $length 0 }}
     Sorry. No matching results found
     {{ end }}
-    {{ $length }} -->
+    {{ $length }}
     <details open><summary>Not OK URLs</summary>
       <table>
         <tr>
